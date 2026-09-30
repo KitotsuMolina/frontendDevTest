@@ -17,7 +17,7 @@ El listado SHALL filtrar en cliente por marca o modelo cada vez que cambia el te
 
 #### Scenario: Filtro y navegación
 - **WHEN** se escribe parte de una marca o modelo y se activa un resultado
-- **THEN** solo se muestran coincidencias y se navega a /products/:id.
+- **THEN** solo se muestran coincidencias y se navega a /product/:id.
 
 ### Requirement: Estados de consulta
 El listado SHALL comunicar carga, error y ausencia de coincidencias sin mostrar datos inventados.

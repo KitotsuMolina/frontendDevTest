@@ -1,6 +1,6 @@
 # Prueba frontend Nunegal / ITX
 
-SPA React preparada con Vite y TypeScript. Fase actual: infraestructura y planificación. La pantalla provisional acredita el montaje; listado, detalle, navegación, caché y cesta siguen pendientes.
+SPA React con Vite y TypeScript. Preparación y navegación completadas. Las rutas `/` y `/product/:id` muestran vistas provisionales; catálogo, consultas API, caché, detalle funcional y acciones de cesta siguen pendientes.
 
 ## Requisitos
 
@@ -27,7 +27,7 @@ Abrir la URL que imprime Vite (normalmente http://localhost:5173). No se necesit
 | `pnpm preview` | Servir localmente el resultado de build |
 | `pnpm spec:validate` | Validar los artefactos OpenSpec en modo estricto |
 
-`pnpm-lock.yaml` es el único archivo de bloqueo del proyecto. `pnpm-workspace.yaml` registra la política de scripts de dependencias. Los tests de esta fase verifican el montaje inicial, no funcionalidades todavía inexistentes.
+`pnpm-lock.yaml` es el único archivo de bloqueo del proyecto. `pnpm-workspace.yaml` registra la política de scripts de dependencias. Las siete pruebas verifican rutas, enlaces de regreso, breadcrumbs, contador estático y navegación por teclado e historial.
 
 ## Decisiones técnicas
 
@@ -55,9 +55,9 @@ Las consultas GET tendrán caché cliente con expiración de una hora y revalida
 
 OpenSpec 1.13.1 inicializado con el esquema `spec-driven` y habilidades locales de Codex. CLI fijada como dependencia de desarrollo: `pnpm exec openspec list`, `pnpm exec openspec status --change 01-navigation`.
 
-[Plan de hitos](openspec/roadmap.md): preparación → navegación → listado → caché → detalle → cesta → acabado. Cada cambio contiene propuesta, diseño, escenarios de aceptación y tareas concretas; los hitos funcionales permanecen pendientes. `openspec/specs` se reserva para especificaciones entregadas y sincronizadas, sin atribuir comportamiento futuro al código actual.
+[Plan de hitos](openspec/roadmap.md): preparación → navegación → listado → caché → detalle → cesta → acabado. Cada cambio contiene propuesta, diseño, escenarios de aceptación y tareas concretas; navegación está completada y los restantes hitos funcionales permanecen pendientes. `openspec/specs` se reserva para especificaciones entregadas y sincronizadas, sin atribuir comportamiento futuro al código actual.
 
-La preparación se entrega en un único primer commit real. Tras ella se revisa navegación con el usuario antes de empezar. La publicación en repositorio público forma parte de la entrega futura; todavía no se ha elegido destino ni publicado el proyecto.
+La preparación se entrega en un único primer commit real. Navegación se entrega en un segundo commit real; el siguiente hito será listado, previa revisión con el usuario. La publicación en repositorio público forma parte de la entrega futura; todavía no se ha elegido destino ni publicado el proyecto.
 
 ## Criterios de aceptación de preparación
 
@@ -75,3 +75,17 @@ Las evidencias de ejecución quedan en [verificación](openspec/changes/00-proje
 - [Vite: guía y plantilla react-ts](https://vite.dev/guide/)
 - [OpenSpec: instalación](https://openspec.dev/docs/installation) y [configuración de proyecto](https://openspec.dev/docs/setup)
 - [pnpm: instalación](https://pnpm.io/installation)
+
+## Navegación implementada
+
+- `/`: listado provisional con enlace explícito de demostración a `/product/demo`.
+- `/product/:id`: detalle provisional que identifica el parámetro de ruta y permite volver al listado.
+- Cabecera compartida, título enlazado al inicio, breadcrumbs con `aria-current` y cesta estática en 0 en ambas vistas.
+- Enlaces de React Router, salto al contenido, foco visible y traslado de foco al contenido al cambiar de ruta. Diseño adaptable con breadcrumbs en una segunda fila en móvil.
+- Las URL no reconocidas redirigen al listado sin añadir otra vista. En producción el hosting deberá ofrecer fallback a `index.html`; el acceso directo se ha verificado con Vite en desarrollo.
+
+Las consultas y el nombre real del producto en breadcrumbs, así como persistencia y actualización de cesta, se implementarán en sus hitos. No se realizan llamadas API.
+
+[Verificación de navegación](openspec/changes/01-navigation/verification.md): siete pruebas, test/lint/build/validación correctos y comprobación en Chromium de acceso directo, historial, navegación sin recarga, teclado y tamaños 360/768/1440 px.
+
+Enrutado declarativo conforme a la [documentación oficial de React Router](https://reactrouter.com/start/declarative/routing).

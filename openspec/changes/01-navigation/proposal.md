@@ -6,7 +6,8 @@ Implementar el hito navegación de la prueba tras 00-project-setup, trazable a R
 ## What Changes
 - Añadir los comportamientos definidos en la especificación de este hito.
 - Mantener exactamente dos vistas y verificar los escenarios de aceptación.
-- Estado actual: planificación; implementación pendiente de revisión con el usuario.
+- Implementar rutas / y /product/:id con contenido provisional, contador estático en 0, regreso explícito y navegación accesible por teclado.
+- Alcance autorizado por el usuario: solo navegación.
 
 ## Capabilities
 
