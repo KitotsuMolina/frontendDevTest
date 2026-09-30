@@ -6,7 +6,7 @@ Implementar el hito caché de la prueba tras 02-product-list, trazable a R14 del
 ## What Changes
 - Añadir los comportamientos definidos en la especificación de este hito.
 - Mantener exactamente dos vistas y verificar los escenarios de aceptación.
-- Estado actual: planificación; implementación pendiente de revisión con el usuario.
+- Implementación autorizada: persistencia localStorage, TTL exacto y deduplicación; detalle y POST siguen pendientes.
 
 ## Capabilities
 

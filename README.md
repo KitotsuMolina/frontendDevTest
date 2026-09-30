@@ -1,6 +1,6 @@
 # Prueba frontend Nunegal / ITX
 
-SPA React con Vite y TypeScript. Preparación, navegación y listado completados. `/` consulta el catálogo real y permite búsqueda local; `/product/:id` sigue mostrando detalle provisional. Caché, consulta de detalle y acciones de cesta siguen pendientes.
+SPA React con Vite y TypeScript. Preparación, navegación, listado y caché completados. `/` consulta el catálogo real y permite búsqueda local; `/product/:id` sigue mostrando detalle provisional. Consulta de detalle y acciones de cesta siguen pendientes.
 
 ## Requisitos
 
@@ -28,7 +28,7 @@ Abrir la URL que imprime Vite (normalmente http://localhost:5173). No se necesit
 | `pnpm preview` | Servir localmente el resultado de build |
 | `pnpm spec:validate` | Validar los artefactos OpenSpec en modo estricto |
 
-`pnpm-lock.yaml` es el único archivo de bloqueo del proyecto. `pnpm-workspace.yaml` registra la política de scripts de dependencias. Las 28 pruebas verifican cliente HTTP, contrato, listado, búsqueda, precios vacíos, estados, imágenes fallidas y navegación. `fetch` se sustituye por respuestas simuladas; ninguna prueba depende de la API pública.
+`pnpm-lock.yaml` es el único archivo de bloqueo del proyecto. `pnpm-workspace.yaml` registra la política de scripts de dependencias. Las 44 pruebas verifican cliente HTTP, contrato, listado, búsqueda, precios vacíos, estados, imágenes fallidas y navegación. `fetch` se sustituye por respuestas simuladas; ninguna prueba depende de la API pública.
 
 ## Decisiones técnicas
 
@@ -56,9 +56,9 @@ Las consultas GET tendrán caché cliente con expiración de una hora y revalida
 
 OpenSpec 1.13.1 inicializado con el esquema `spec-driven` y habilidades locales de Codex. CLI fijada como dependencia de desarrollo: `pnpm exec openspec list`, `pnpm exec openspec status --change 01-navigation`.
 
-[Plan de hitos](openspec/roadmap.md): preparación → navegación → listado → caché → detalle → cesta → acabado. Cada cambio contiene propuesta, diseño, escenarios de aceptación y tareas concretas; navegación y listado están completados y los restantes hitos funcionales permanecen pendientes. `openspec/specs` se reserva para especificaciones entregadas y sincronizadas, sin atribuir comportamiento futuro al código actual.
+[Plan de hitos](openspec/roadmap.md): preparación → navegación → listado → caché → detalle → cesta → acabado. Cada cambio contiene propuesta, diseño, escenarios de aceptación y tareas concretas; navegación, listado y caché están completados y los restantes hitos funcionales permanecen pendientes. `openspec/specs` se reserva para especificaciones entregadas y sincronizadas, sin atribuir comportamiento futuro al código actual.
 
-La preparación se entrega en un único primer commit real. Navegación se entrega en un segundo commit real; los ajustes posteriores de navbar y easter egg se registran en un commit propio y listado en otro. El siguiente hito es caché, previa revisión con el usuario. La publicación en repositorio público forma parte de la entrega futura; todavía no se ha elegido destino ni publicado el proyecto.
+La preparación se entrega en un único primer commit real. Navegación se entrega en un segundo commit real; los ajustes posteriores de navbar y easter egg se registran en un commit propio y listado en otro. El siguiente hito es detalle, previa revisión con el usuario. La publicación en repositorio público forma parte de la entrega futura; todavía no se ha elegido destino ni publicado el proyecto.
 
 ## Criterios de aceptación de preparación (hito completado)
 
@@ -110,7 +110,7 @@ La carga muestra esqueletos de tarjetas con brillo animado, sin texto visible de
 - `src/pages/ProductListPage.tsx`: filtro local y estados de presentación.
 - `src/components/ProductCard.tsx`: datos, imagen y enlace de cada producto.
 
-Todavía no hay caché: volver al listado realiza una nueva consulta. En desarrollo, React StrictMode inicia y cancela una primera solicitud al comprobar el montaje; Chromium registra dos intentos GET iniciales, y **cero adicionales al buscar**. No se ha añadido deduplicación ni caché para ocultar este comportamiento.
+El listado reutiliza la caché válida al regresar o recargar. StrictMode comparte una única solicitud pendiente mediante la capa de deduplicación; buscar no genera peticiones.
 
 [Verificación del listado](openspec/changes/02-product-list/verification.md): 25 pruebas simuladas, integración real de 100 productos (6 precios vacíos) y revisión visual a 360, 768, 1440 y 1920 px.
 
@@ -123,3 +123,13 @@ Las tarjetas incorporan la animación de [SteveBloX en Uiverse](https://uiverse.
 En detalle, una solapa curva bajo el lado izquierdo de la cabecera muestra flecha y «Volver». Retrocede dentro del historial de la SPA; si se accede directamente sin historial interno, vuelve al listado. El enlace explícito al listado se conserva.
 
 Al regresar al listado, la página y los esqueletos entran con un fundido breve; al responder la consulta, los resultados aparecen con un fundido y desplazamiento de 8 px. Las tarjetas aparecen dentro de la transición del conjunto. Las transiciones no retrasan la consulta y se eliminan con movimiento reducido.
+
+## Caché de consultas implementada
+
+El listado conserva respuestas válidas en localStorage durante exactamente 3 600 000 ms desde su obtención. Leer una entrada no renueva su caducidad. Al alcanzar el límite se consulta de nuevo y solo un éxito validado reemplaza la entrada; no se ofrecen datos caducados. Los listados vacíos también se almacenan.
+
+Claves: `nunegal:query:v1:products` para listado y `nunegal:query:v1:product:<id codificado>` reservada para futuros detalles. `src/api/queryCache.ts` separa almacenamiento, validación y deduplicación. No se implementa consulta de detalle ni se aplica caché a POST.
+
+Datos corruptos, localStorage bloqueado o lleno se tratan como ausencia de caché: la aplicación continúa mediante consultas normales. Las solicitudes simultáneas de una clave comparten transporte; los errores permiten reintento y una cancelación individual no interrumpe a otros consumidores. Si todos cancelan, se aborta el transporte después de una microtarea, evitando duplicaciones durante el montaje de StrictMode.
+
+[Verificación de caché](openspec/changes/03-query-cache/verification.md): 44 pruebas simuladas, reloj controlado y Chromium con API real. Una petición inicial, cero adicionales al recargar o regresar al listado; una nueva petición tras forzar la expiración, sin esperar una hora real. Caché completada; detalle y cesta siguen pendientes.

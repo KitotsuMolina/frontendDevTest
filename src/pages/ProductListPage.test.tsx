@@ -118,6 +118,7 @@ describe('listado de productos', () => {
   it('aborta la consulta pendiente al abandonar la vista', async () => {
     vi.mocked(fetch).mockReturnValue(new Promise(() => {}))
     const { unmount } = renderList()
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1))
     const signal = vi.mocked(fetch).mock.calls[0][1]?.signal
     unmount()
     await waitFor(() => expect(signal?.aborted).toBe(true))

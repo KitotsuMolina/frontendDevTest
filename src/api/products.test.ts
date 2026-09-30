@@ -7,7 +7,7 @@ describe('cliente HTTP de productos', () => {
     vi.mocked(fetch).mockResolvedValue(jsonResponse())
     const controller = new AbortController()
     expect(await getProducts(controller.signal)).toEqual(products)
-    expect(fetch).toHaveBeenCalledWith(PRODUCTS_URL, { method: 'GET', signal: controller.signal })
+    expect(fetch).toHaveBeenCalledWith(PRODUCTS_URL, { method: 'GET', signal: expect.any(AbortSignal) })
   })
 
   it('acepta un catálogo vacío', async () => {

@@ -1,3 +1,5 @@
+import { productQueryKeys, queryCache } from './queryCache'
+
 export interface Product {
   id: string
   brand: string
@@ -15,12 +17,14 @@ function isProduct(value: unknown): value is Product {
   )
 }
 
-export async function getProducts(signal?: AbortSignal): Promise<Product[]> {
-  const response = await fetch(PRODUCTS_URL, { method: 'GET', signal })
-  if (!response.ok) throw new Error(`Error al consultar productos: HTTP ${response.status}`)
-  const data: unknown = await response.json()
-  if (!Array.isArray(data) || !data.every(isProduct)) {
-    throw new Error('La respuesta del catálogo no cumple el contrato esperado')
-  }
-  return data
+export function isProductList(value: unknown): value is Product[] {
+  return Array.isArray(value) && value.every(isProduct)
+}
+
+export function getProducts(signal?: AbortSignal): Promise<Product[]> {
+  return queryCache.query(productQueryKeys.list, async requestSignal => {
+    const response = await fetch(PRODUCTS_URL, { method: 'GET', signal: requestSignal })
+    if (!response.ok) throw new Error(`Error al consultar productos: HTTP ${response.status}`)
+    return response.json() as Promise<unknown>
+  }, isProductList, signal)
 }
