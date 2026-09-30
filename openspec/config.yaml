@@ -1,0 +1,13 @@
+schema: spec-driven
+context: |
+  Prueba frontend Nunegal/ITX. Fuente: openspec/Prueba frontend ITX.pdf (7 páginas).
+  SPA React + Vite + TypeScript estricto. pnpm, ESLint y Vitest con Testing Library.
+  Exactamente dos vistas futuras: listado y detalle. Sin SSR ni vista de carrito.
+  API: https://itx-frontend-test.onrender.com; GET /api/product,
+  GET /api/product/:id, POST /api/cart con id, colorCode, storageCode; respuesta count.
+  Caché GET en cliente con TTL de una hora; contador persistente independiente.
+  Implementar por hitos reales; nunca fabricar commits retrospectivos.
+  Fase actual limitada a preparación. Revisar con el usuario antes de navegación.
+rules:
+  tasks:
+    - Incluir verificaciones concretas y mantener pendientes las funcionalidades futuras.
