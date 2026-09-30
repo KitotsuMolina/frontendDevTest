@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
+import Breadcrumbs from './Breadcrumbs'
 import logoBackground from '../assets/kitotsu-logo-background.png'
 
 export default function Header() {
@@ -46,16 +47,19 @@ export default function Header() {
         <Link className="brand" to="/">Nunegal / ITX</Link>
         <p className="cart-count" aria-label="Cesta: 0 productos">Cesta <span>0</span></p>
       </div>
-      {isDetail && (
-        <div className="detail-back-tab">
+      <div className="detail-back-tab" data-detail={isDetail}>
+        <div className="tab-back-slot">
+          {isDetail && (
           <button type="button" onClick={goBack} aria-label="Volver a la página anterior">
             <svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
               <path d="m10 5-7 7 7 7M3 12h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <span>Volver</span>
           </button>
+          )}
         </div>
-      )}
+        <Breadcrumbs detail={isDetail} />
+      </div>
     </header>
   )
 }

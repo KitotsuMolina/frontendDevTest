@@ -81,7 +81,7 @@ Las evidencias de ejecución quedan en [verificación](openspec/changes/00-proje
 
 - `/`: listado real; cada tarjeta enlaza a `/product/:id`.
 - `/product/:id`: detalle provisional que identifica el parámetro de ruta y permite volver al listado.
-- Cabecera compartida con título enlazado al inicio y cesta estática en 0 en ambas vistas. Los breadcrumbs se han retirado por petición posterior del usuario.
+- Cabecera compartida con título enlazado al inicio y cesta estática en 0 en ambas vistas. Los breadcrumbs se muestran en una solapa persistente bajo la navbar; en detalle aparece Volver y la solapa se amplía suavemente.
 - Enlaces de React Router, salto al contenido, foco visible y traslado de foco al contenido al cambiar de ruta. Diseño adaptable; el título visible del listado también se ha retirado, conservando su identificación accesible.
 - Las URL no reconocidas redirigen al listado sin añadir otra vista. En producción el hosting deberá ofrecer fallback a `index.html`; el acceso directo se ha verificado con Vite en desarrollo.
 
@@ -120,9 +120,15 @@ La cabecera permanece fija. Al subir desde el catálogo, el buscador se desliza 
 
 Las tarjetas incorporan la animación de [SteveBloX en Uiverse](https://uiverse.io/SteveBloX/dangerous-warthog-85): ampliación al pasar el cursor o enfocar con teclado y contracción con giro al pulsar. Se aplica al enlace interior para coexistir con la recolocación del filtro. Movimiento reducido desactiva transformaciones. Atribución y licencia en [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-En detalle, una solapa curva bajo el lado izquierdo de la cabecera muestra flecha y «Volver». Retrocede dentro del historial de la SPA; si se accede directamente sin historial interno, vuelve al listado. El enlace explícito al listado se conserva.
+En detalle, una solapa curva bajo el lado izquierdo de la cabecera muestra flecha y «Volver». Retrocede dentro del historial de la SPA; si se accede directamente sin historial interno, vuelve al listado. El enlace Listado de los breadcrumbs permite regresar directamente al catálogo.
 
 Al regresar al listado, la página y los esqueletos entran con un fundido breve; al responder la consulta, los resultados aparecen con un fundido y desplazamiento de 8 px. Las tarjetas aparecen dentro de la transición del conjunto. Las transiciones no retrasan la consulta y se eliminan con movimiento reducido.
+
+Breadcrumbs recuperados por petición del usuario para cumplir el enunciado: Listado como vista actual en `/`, y Listado / Detalle del producto en detalle, con enlace de regreso y aria-current. El nombre real del producto se incorporará al implementar su consulta.
+
+Ajuste posterior: breadcrumbs dentro de la solapa izquierda de la cabecera en ambas vistas. Al abrir detalle, aparece Volver y los breadcrumbs se desplazan a la derecha mientras se amplía el panel; al regresar solo se retira Volver. En pantallas estrechas el buscador acoplado queda debajo de esta solapa para evitar solapamientos. Movimiento reducido desactiva la transición.
+
+Se retira el enlace duplicado «Volver al listado» sobre el texto provisional del detalle. El regreso queda en la solapa: botón Volver y enlace Listado de los breadcrumbs.
 
 ## Caché de consultas implementada
 
@@ -133,3 +139,5 @@ Claves: `nunegal:query:v1:products` para listado y `nunegal:query:v1:product:<id
 Datos corruptos, localStorage bloqueado o lleno se tratan como ausencia de caché: la aplicación continúa mediante consultas normales. Las solicitudes simultáneas de una clave comparten transporte; los errores permiten reintento y una cancelación individual no interrumpe a otros consumidores. Si todos cancelan, se aborta el transporte después de una microtarea, evitando duplicaciones durante el montaje de StrictMode.
 
 [Verificación de caché](openspec/changes/03-query-cache/verification.md): 44 pruebas simuladas, reloj controlado y Chromium con API real. Una petición inicial, cero adicionales al recargar o regresar al listado; una nueva petición tras forzar la expiración, sin esperar una hora real. Caché completada; detalle y cesta siguen pendientes.
+
+El buscador acoplado espera 600 ms antes de ocultarse al bajar; al primer acoplamiento reserva además 400 ms para su entrada. La salida se desliza y desvanece durante 380 ms. Subir o mantener el foco cancela la ocultación; movimiento reducido elimina las animaciones.

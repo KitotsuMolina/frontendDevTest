@@ -10,17 +10,34 @@ export default function CatalogSearch({ value, onChange }: Props) {
   useEffect(() => {
     let previousY = window.scrollY
     let frame = 0
+    let wasDocked = false
+    let hideTimer: ReturnType<typeof window.setTimeout> | undefined
+    const cancelHide = () => {
+      window.clearTimeout(hideTimer)
+      hideTimer = undefined
+    }
     const update = () => {
       frame = 0
       const headerHeight = document.querySelector('header')?.getBoundingClientRect().height ?? 0
       const docked = (slotRef.current?.getBoundingClientRect().top ?? Infinity) < headerHeight
       const currentY = window.scrollY
       const difference = currentY - previousY
+      const focused = document.activeElement === inputRef.current
+      const entering = docked && !wasDocked
+      if (!docked || focused || difference < -3) cancelHide()
+      else if ((entering || difference > 3) && hideTimer === undefined) {
+        hideTimer = window.setTimeout(() => {
+          hideTimer = undefined
+          if (document.activeElement !== inputRef.current) {
+            setPosition(previous => ({ ...previous, visible: false }))
+          }
+        }, entering ? 1000 : 600)
+      }
       setPosition(previous => ({
         docked,
-        visible: docked && (document.activeElement === inputRef.current ||
-          (difference < -3 ? true : difference > 3 ? false : previous.visible)),
+        visible: docked && (entering || focused || difference < -3 || previous.visible),
       }))
+      wasDocked = docked
       if (Math.abs(difference) > 3) previousY = currentY
     }
     const schedule = () => { if (!frame) frame = window.requestAnimationFrame(update) }
@@ -31,6 +48,7 @@ export default function CatalogSearch({ value, onChange }: Props) {
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
       window.cancelAnimationFrame(frame)
+      cancelHide()
     }
   }, [])
 

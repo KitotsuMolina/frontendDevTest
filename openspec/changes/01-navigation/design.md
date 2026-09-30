@@ -22,3 +22,11 @@ Breadcrumbs fuera de la barra superior. Easter egg autorizado: esquina izquierda
 ## Ajuste posterior: simplificar el contenido
 
 Por instrucción explícita del usuario se eliminan los breadcrumbs en ambas vistas y el título visible del listado, aunque el PDF original propusiera breadcrumbs. El listado mantiene una región accesible con nombre, el buscador alineado a la derecha y los enlaces de empresa y regreso al listado. No incorporar breadcrumbs ni nombres de producto en ellos en hitos posteriores sin una nueva instrucción.
+
+## Recuperación de breadcrumbs solicitada
+
+Breadcrumbs vuelve al contenido de ambas páginas. En detalle comparte una fila adaptable con el enlace explícito de regreso; el listado identifica su vista actual antes del buscador. La cabecera conserva empresa, cesta y solapa. El nombre del producto queda pendiente de la consulta de detalle.
+
+## Solapa persistente solicitada
+
+Breadcrumbs se traslada a Header. La solapa conserva su DOM entre rutas, anima su ancho de 160 a 440 px y reserva de 0 a 112 px para el control Volver, desplazando el breadcrumb. En móvil queda limitada al ancho disponible y el buscador acoplado se coloca debajo para evitar colisiones. Movimiento reducido elimina las transiciones.

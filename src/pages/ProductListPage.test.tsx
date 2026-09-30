@@ -43,7 +43,7 @@ describe('listado de productos', () => {
     expect(headings.map((heading) => heading.textContent)).toEqual(models)
     expect(fetch).toHaveBeenCalledTimes(1)
     await user.clear(screen.getByRole('searchbox'))
-    expect(screen.getAllByRole('listitem')).toHaveLength(products.length)
+    expect(within(screen.getByRole('list', { name: 'Productos' })).getAllByRole('listitem')).toHaveLength(products.length)
     expect(fetch).toHaveBeenCalledTimes(1)
   })
 
@@ -54,7 +54,7 @@ describe('listado de productos', () => {
     expect(screen.getByText(/No se encontraron productos/)).toBeVisible()
     expect(screen.queryByText(/No hay productos disponibles/)).not.toBeInTheDocument()
     await user.clear(screen.getByRole('searchbox'))
-    expect(screen.getAllByRole('listitem')).toHaveLength(products.length)
+    expect(within(screen.getByRole('list', { name: 'Productos' })).getAllByRole('listitem')).toHaveLength(products.length)
     expect(fetch).toHaveBeenCalledTimes(1)
   })
 

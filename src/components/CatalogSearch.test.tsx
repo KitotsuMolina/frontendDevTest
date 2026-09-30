@@ -17,7 +17,8 @@ it('integra el mismo buscador al subir y conserva su valor y foco', async () => 
   scroll = 500
   fireEvent.scroll(window)
   await waitFor(() => expect(panel).toHaveAttribute('data-docked', 'true'))
-  expect(panel).toHaveAttribute('data-visible', 'false')
+  expect(panel).toHaveAttribute('data-visible', 'true')
+  await waitFor(() => expect(panel).toHaveAttribute('data-visible', 'false'), { timeout: 2500 })
   scroll = 400
   fireEvent.scroll(window)
   await waitFor(() => expect(panel).toHaveAttribute('data-visible', 'true'))

@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router'
+import { useParams } from 'react-router'
 
 export default function ProductDetailPage() {
   const { id } = useParams()
@@ -9,7 +9,6 @@ export default function ProductDetailPage() {
       <h1 id="detail-title">Detalle del producto</h1>
       <p>Referencia de la ruta: <strong>{id}</strong></p>
       <p>La información y las opciones del producto estarán disponibles en un hito posterior.</p>
-      <Link className="page-link" to="/">Volver al listado</Link>
     </section>
   )
 }
