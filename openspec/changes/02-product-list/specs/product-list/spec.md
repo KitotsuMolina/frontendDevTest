@@ -38,6 +38,14 @@ El listado SHALL filtrar por coincidencia parcial de marca O modelo ante cada ca
 - **WHEN** se introduce parte de un modelo y después se limpia el campo
 - **THEN** primero se muestran coincidencias y después todos los productos, sin nueva consulta.
 
+#### Scenario: Transición del filtro
+- **WHEN** se modifica la búsqueda
+- **THEN** las tarjetas descartadas se desvanecen, dejan de aceptar interacción y las coincidencias se desplazan suavemente para ocupar sus huecos, sin nuevas peticiones ni retrasar el filtro.
+
+#### Scenario: Cambios rápidos y movimiento reducido
+- **WHEN** se cambia o limpia rápidamente la búsqueda, o se solicita movimiento reducido
+- **THEN** se conserva el resultado del último filtro sin duplicados y la preferencia de movimiento reducido elimina las transiciones.
+
 #### Scenario: Selección de tarjeta
 - **WHEN** se activa una tarjeta con ratón o teclado
 - **THEN** se navega mediante la SPA a /product/:id con el id correspondiente.
@@ -47,7 +55,7 @@ El listado SHALL mostrar carga mientras se consulta, fallo con control de reinte
 
 #### Scenario: Carga
 - **WHEN** la consulta está pendiente
-- **THEN** se comunica que se están cargando los productos sin mostrar un catálogo vacío prematuramente.
+- **THEN** se muestran esqueletos de tarjetas en la cuadrícula con animación suave, sin texto visible de carga, se anuncia la carga a lectores de pantalla y se elimina la animación si se solicita movimiento reducido.
 
 #### Scenario: Error y recuperación
 - **WHEN** falla una consulta y el usuario activa Reintentar
@@ -67,3 +75,17 @@ Cada imagen SHALL tener texto alternativo que identifique marca y modelo. Si la 
 #### Scenario: Imagen fallida
 - **WHEN** una imagen emite un error de carga
 - **THEN** se muestra «Imagen no disponible» y se conserva la identidad y navegación del producto.
+
+### Requirement: Buscador acoplado al subir
+El buscador SHALL integrarse suavemente debajo de la cabecera fija al subir desde el catálogo. SHALL conservar valor y foco, adaptarse al ancho disponible y eliminar transiciones con movimiento reducido.
+
+#### Scenario: Cambio de dirección
+- **WHEN** se sube después de dejar atrás la posición original del buscador
+- **THEN** el campo aparece bajo el extremo derecho de la cabecera; al bajar se oculta salvo si mantiene el foco y al volver al inicio recupera su posición original.
+
+### Requirement: Presentación suave del listado
+El listado SHALL presentar esqueletos y resultados con entrada suave al regresar desde detalle, sin demorar la consulta. Las tarjetas SHALL responder al cursor y foco con ampliación y a la pulsación con contracción y giro. Movimiento reducido SHALL eliminar estas animaciones.
+
+#### Scenario: Vuelta al listado
+- **WHEN** se regresa desde detalle y termina la consulta del catálogo
+- **THEN** los esqueletos y después los resultados aparecen con fundido suave y los resultados con ligero desplazamiento, manteniendo los estados accesibles existentes.

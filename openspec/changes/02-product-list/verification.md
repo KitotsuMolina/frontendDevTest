@@ -23,3 +23,19 @@ StrictMode en desarrollo inicia dos intentos GET al montar, cancelando el primer
 La revisión visual detectó imágenes que podían exceder la altura de su contenedor por dimensionado porcentual en CSS Grid. Se fijó su altura a 190 px y se repitieron las comprobaciones de columnas, imágenes cargadas y ausencia de solapamientos antes de la entrega.
 
 Las cuatro tareas están completadas. Se detiene el desarrollo: caché, consulta de detalle y acciones de cesta quedan pendientes.
+
+## Ajuste posterior: esqueletos de carga
+
+Se sustituye el mensaje visible por ocho esqueletos animados de tarjetas, reutilizando las columnas del catálogo. Chromium con una respuesta retenida confirmó una columna a 360 px, cuatro a 1440 px, brillo activo, ausencia de animación con movimiento reducido y retirada de esqueletos al responder. Capturas móvil y escritorio revisadas. La prueba de carga verifica aviso accesible, ausencia de enlaces durante espera y sustitución por productos. Las 25 pruebas, lint, build y validación OpenSpec pasan.
+
+## Ajuste posterior: animación de búsqueda
+
+Chromium con el catálogo real confirmó opacidades intermedias de las tarjetas descartadas y transformaciones durante la recolocación de las coincidencias. Las salientes son inert. Cambiar rápidamente entre Acer, Galaxy y búsqueda vacía recupera los 100 productos sin nuevas consultas. Se comprobó la preferencia de movimiento reducido y la distribución a 360 y 1440 px sin desbordamiento. La nueva prueba simulada cubre cambios rápidos y limpieza sin nuevas peticiones; 25 pruebas pasan. Lint, build y validación estricta de los siete cambios OpenSpec correctos.
+
+## Ajuste posterior: buscador bajo la cabecera
+
+26 pruebas pasan, incluida dirección de scroll, conservación del mismo input y valor, foco y vuelta al inicio. Lint, build y validación de los siete cambios pasan. Chromium confirma el panel visible al subir, alineado exactamente bajo la cabecera (73 px en escritorio de 1440 px y 65 px en móvil de 360 px), sin desbordamiento horizontal. Movimiento reducido da transición de 0 s. Captura móvil revisada. Servidor Vite disponible en http://127.0.0.1:5173/.
+
+## Cierre de los ajustes visuales
+
+28 pruebas aprobadas: incluye solapa de regreso con historial y acceso directo, buscador acoplado y cambios rápidos de filtro. Test, lint completo, build y validación estricta OpenSpec correctos. ESLint excluye directorios de herramientas locales (.aws, .codex y .agents) para evitar recorrer entradas virtuales del entorno; el código de aplicación y configuraciones siguen comprobándose. Se incluyen entrada suave del listado, hover/foco y pulsación de tarjetas adaptados de SteveBloX con aviso MIT, navbar fija, scrollbar, esqueletos, ancho completo y eliminación solicitada de breadcrumbs/título visible. Caché, API de detalle y POST de cesta siguen pendientes.

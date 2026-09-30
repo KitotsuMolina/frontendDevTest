@@ -18,3 +18,7 @@ Contrato remoto o integración con cambios anteriores → inspeccionar sus entre
 ## Ajuste visual posterior solicitado
 
 Breadcrumbs fuera de la barra superior. Easter egg autorizado: esquina izquierda con imagen Kitotsu fija debajo, superficie de papel recortada progresivamente y pliegue con gradiente y sombra. Hover/foco revela; pulsación alterna apertura; prefers-reduced-motion elimina transiciones. No incorpora consultas ni acciones de cesta.
+
+## Ajuste posterior: simplificar el contenido
+
+Por instrucción explícita del usuario se eliminan los breadcrumbs en ambas vistas y el título visible del listado, aunque el PDF original propusiera breadcrumbs. El listado mantiene una región accesible con nombre, el buscador alineado a la derecha y los enlaces de empresa y regreso al listado. No incorporar breadcrumbs ni nombres de producto en ellos en hitos posteriores sin una nueva instrucción.

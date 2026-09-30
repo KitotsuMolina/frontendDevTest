@@ -13,14 +13,14 @@ La aplicación SHALL disponer únicamente de listado y detalle con enrutado clie
 - **THEN** se muestran las vistas correspondientes dentro de la misma SPA.
 
 ### Requirement: Cabecera navegable
-La cabecera SHALL contener únicamente título o icono enlazado al listado y contador de cesta inicialmente en 0 a la derecha, visible en ambas vistas. Los breadcrumbs navegables SHALL mostrarse debajo de la cabecera.
+La cabecera SHALL contener únicamente título o icono enlazado al listado y contador de cesta inicialmente en 0 a la derecha, visible en ambas vistas. Los breadcrumbs SHALL omitirse por instrucción posterior del usuario.
 
 #### Scenario: Regreso al listado
-- **WHEN** se activa el título o el breadcrumb de listado desde detalle
+- **WHEN** se activa el nombre de empresa o el enlace de regreso desde detalle
 - **THEN** se vuelve a la ruta principal.
 
 ### Requirement: Navegación accesible y adaptable
-La interfaz SHALL adaptarse a móvil y escritorio y ofrecer enlaces operables mediante teclado, foco visible y breadcrumbs con la vista actual identificada. El nombre real del producto se incorporará tras implementar su consulta.
+La interfaz SHALL adaptarse a móvil y escritorio y ofrecer enlaces operables mediante teclado, foco visible y contenido de la vista identificado de forma accesible. El listado SHALL omitir su título visible, manteniendo una región accesible con nombre.
 
 #### Scenario: Teclado y cambio de vista
 - **WHEN** se recorren y activan los enlaces mediante Tab y Enter
@@ -29,3 +29,10 @@ La interfaz SHALL adaptarse a móvil y escritorio y ofrecer enlaces operables me
 #### Scenario: Acceso directo
 - **WHEN** se abre directamente /product/demo en desarrollo
 - **THEN** se monta el detalle provisional con cabecera y contador en 0.
+
+### Requirement: Solapa de regreso en detalle
+La cabecera SHALL mostrar una solapa izquierda con flecha y control accesible de regreso únicamente en detalle.
+
+#### Scenario: Regreso y acceso directo
+- **WHEN** se activa la solapa en detalle
+- **THEN** se retrocede en el historial interno de la SPA o se vuelve al listado si no hay una entrada interna anterior, conservando el enlace explícito al listado.

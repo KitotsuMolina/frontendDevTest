@@ -20,3 +20,19 @@ React/Vite/TypeScript estricto con pnpm; navegación completada y ajustes de nav
 - API remota puede fallar → estado recuperable con reintento y tests deterministas.
 - Algunas imágenes o precios no están disponibles → alternativas visuales y textuales sin excluir productos.
 - Sin caché aún → volver al listado vuelve a consultar; permitido en este hito y resuelto en el siguiente.
+
+## Ajuste de carga solicitado
+
+Ocho tarjetas de esqueleto reutilizan la cuadrícula adaptable durante consulta inicial y reintento. El texto de carga solo se anuncia a lectores de pantalla; los esqueletos son decorativos y no contienen enlaces. Un brillo recorre sus bloques hasta que la consulta termina. prefers-reduced-motion elimina la animación.
+
+## Ajuste de ancho solicitado
+
+Cabecera, breadcrumbs y contenido ocupan el ancho disponible sin contenedor centrado limitado a 1120 px. Se conserva únicamente padding lateral de 24 px en escritorio y 16 px en móvil, respetando la estructura del PDF y el máximo de cuatro tarjetas por fila. La cabecera reserva el espacio de su esquina desplegable.
+
+## Animación del filtro solicitada
+
+Motion usa AnimatePresence con popLayout para retirar del flujo las tarjetas que salen mientras se desvanecen durante 180 ms. ProductCard transmite su referencia al elemento li; layout="position" anima la recolocación con resorte sin escalar el contenido. La cuadrícula tiene posición relativa. Las tarjetas salientes se marcan inert y aria-hidden para impedir interacción y lectura de resultados descartados. useReducedMotion elimina las transiciones. Las claves siguen siendo los ids y el efecto HTTP no cambia.
+
+## Acoplamiento del buscador solicitado
+
+CatalogSearch mantiene un único input dentro de un espacio reservado. El scroll pasivo se procesa en requestAnimationFrame para detectar dirección y paso de su posición original. El panel fijo aparece al subir con transición de transform y opacity, curva y sombra. ResizeObserver mide la cabecera compartida y actualiza su altura CSS; el detalle no incorpora buscador. El foco mantiene visible el panel y movimiento reducido elimina transiciones.

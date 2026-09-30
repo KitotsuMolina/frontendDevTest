@@ -58,6 +58,19 @@ describe('listado de productos', () => {
     expect(fetch).toHaveBeenCalledTimes(1)
   })
 
+  it('mantiene resultados correctos al cambiar y limpiar rápidamente el filtro', async () => {
+    await renderLoaded()
+    const search = screen.getByRole('searchbox')
+    fireEvent.change(search, { target: { value: 'Acer' } })
+    expect(screen.queryByRole('link', { name: 'Samsung Galaxy A10' })).not.toBeInTheDocument()
+    fireEvent.change(search, { target: { value: 'Galaxy' } })
+    expect(screen.getByRole('link', { name: 'Samsung Galaxy A10' })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Acer Iconia Talk S' })).not.toBeInTheDocument()
+    fireEvent.change(search, { target: { value: '' } })
+    await waitFor(() => expect(screen.getAllByRole('link')).toHaveLength(products.length))
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
   it('distingue catálogo vacío de búsqueda sin coincidencias', async () => {
     vi.mocked(fetch).mockResolvedValue(jsonResponse([]))
     renderList()
@@ -65,15 +78,19 @@ describe('listado de productos', () => {
     expect(screen.queryByText(/No se encontraron productos/)).not.toBeInTheDocument()
   })
 
-  it('muestra carga hasta que responde el servicio', async () => {
+  it('muestra esqueletos accesibles y sin enlaces hasta que responde el servicio', async () => {
     let resolve!: (response: Response) => void
     vi.mocked(fetch).mockReturnValue(new Promise((done) => { resolve = done }))
     renderList()
+    expect(screen.getByRole('status', { name: 'Cargando productos' })).toHaveAttribute('aria-busy', 'true')
     expect(screen.getByRole('status')).toHaveTextContent('Cargando productos')
+    expect(screen.queryByRole('link')).not.toBeInTheDocument()
+    expect(screen.queryByRole('list', { name: 'Productos' })).not.toBeInTheDocument()
     expect(screen.queryByText(/No hay productos/)).not.toBeInTheDocument()
     resolve(jsonResponse())
     await screen.findByRole('list', { name: 'Productos' })
-    expect(screen.queryByText(/Cargando productos/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('status', { name: 'Cargando productos' })).not.toBeInTheDocument()
+    expect(screen.getAllByRole('link')).toHaveLength(products.length)
   })
 
   it.each(['http', 'red', 'contrato'])('permite reintentar un fallo de %s y recuperar el catálogo', async (failure) => {

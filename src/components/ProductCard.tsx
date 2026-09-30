@@ -1,13 +1,30 @@
-import { useState } from 'react'
+import { forwardRef, useState } from 'react'
+import { motion, useIsPresent, useReducedMotion } from 'motion/react'
 import { Link } from 'react-router'
 import type { Product } from '../api/products'
 
-export default function ProductCard({ product }: { product: Product }) {
+const ProductCard = forwardRef<HTMLLIElement, { product: Product }>(function ProductCard({ product }, ref) {
   const [imageFailed, setImageFailed] = useState(false)
+  const isPresent = useIsPresent()
+  const reducedMotion = useReducedMotion()
   const name = `${product.brand} ${product.model}`
 
   return (
-    <li className="product-card">
+    <motion.li
+      ref={ref}
+      className="product-card"
+      layout={reducedMotion ? false : 'position'}
+      initial={reducedMotion ? false : { opacity: 0, scale: 0.97 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: reducedMotion ? 1 : 0.97 }}
+      transition={reducedMotion ? { duration: 0 } : {
+        opacity: { duration: 0.18 },
+        scale: { duration: 0.18 },
+        layout: { type: 'spring', stiffness: 430, damping: 38 },
+      }}
+      inert={!isPresent}
+      aria-hidden={!isPresent || undefined}
+    >
       <Link to={`/product/${encodeURIComponent(product.id)}`} aria-label={name}>
         <div className="product-image">
           {imageFailed || !product.imgUrl.trim() ? (
@@ -26,6 +43,8 @@ export default function ProductCard({ product }: { product: Product }) {
         <h2>{product.model}</h2>
         <p className="product-price">{product.price.trim() ? product.price : 'Precio no disponible'}</p>
       </Link>
-    </li>
+    </motion.li>
   )
-}
+})
+
+export default ProductCard
