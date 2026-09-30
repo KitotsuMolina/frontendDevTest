@@ -80,8 +80,8 @@ Las evidencias de ejecución quedan en [verificación](openspec/changes/00-proje
 
 - `/`: listado provisional con enlace explícito de demostración a `/product/demo`.
 - `/product/:id`: detalle provisional que identifica el parámetro de ruta y permite volver al listado.
-- Cabecera compartida, título enlazado al inicio, breadcrumbs con `aria-current` y cesta estática en 0 en ambas vistas.
-- Enlaces de React Router, salto al contenido, foco visible y traslado de foco al contenido al cambiar de ruta. Diseño adaptable con breadcrumbs en una segunda fila en móvil.
+- Cabecera compartida con título enlazado al inicio y cesta estática en 0 en ambas vistas. Breadcrumbs con `aria-current` debajo de la cabecera.
+- Enlaces de React Router, salto al contenido, foco visible y traslado de foco al contenido al cambiar de ruta. Diseño adaptable con breadcrumbs fuera de la barra superior.
 - Las URL no reconocidas redirigen al listado sin añadir otra vista. En producción el hosting deberá ofrecer fallback a `index.html`; el acceso directo se ha verificado con Vite en desarrollo.
 
 Las consultas y el nombre real del producto en breadcrumbs, así como persistencia y actualización de cesta, se implementarán en sus hitos. No se realizan llamadas API.
@@ -89,3 +89,7 @@ Las consultas y el nombre real del producto en breadcrumbs, así como persistenc
 [Verificación de navegación](openspec/changes/01-navigation/verification.md): siete pruebas, test/lint/build/validación correctos y comprobación en Chromium de acceso directo, historial, navegación sin recarga, teclado y tamaños 360/768/1440 px.
 
 Enrutado declarativo conforme a la [documentación oficial de React Router](https://reactrouter.com/start/declarative/routing).
+
+## Easter egg de la cabecera
+
+Al pasar el cursor por el extremo izquierdo, la esquina de la cabecera se despega con un pliegue y sombra y descubre parte del logo Kitotsu situado debajo. Al salir vuelve a pegarse. También se revela al enfocar el control con teclado; una pulsación permite mantenerlo abierto o cerrarlo. Con movimiento reducido se elimina la transición. La imagen original suministrada está en `src/assets/kitotsu-logo-background.png`.

@@ -13,7 +13,7 @@ La aplicación SHALL disponer únicamente de listado y detalle con enrutado clie
 - **THEN** se muestran las vistas correspondientes dentro de la misma SPA.
 
 ### Requirement: Cabecera navegable
-La cabecera SHALL contener título o icono enlazado al listado, breadcrumbs navegables y contador de cesta inicialmente en 0 a la derecha, visible en ambas vistas.
+La cabecera SHALL contener únicamente título o icono enlazado al listado y contador de cesta inicialmente en 0 a la derecha, visible en ambas vistas. Los breadcrumbs navegables SHALL mostrarse debajo de la cabecera.
 
 #### Scenario: Regreso al listado
 - **WHEN** se activa el título o el breadcrumb de listado desde detalle

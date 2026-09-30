@@ -1,18 +1,26 @@
-import { Link, useMatch } from 'react-router'
+import { useState } from 'react'
+import { Link } from 'react-router'
+import logoBackground from '../assets/kitotsu-logo-background.png'
 
 export default function Header() {
-  const isDetail = useMatch('/product/:id') !== null
+  const [isPeeled, setIsPeeled] = useState(false)
 
   return (
-    <header className="site-header">
+    <header className="site-header" data-peeled={isPeeled}>
+      <div className="peel-art" aria-hidden="true">
+        <img src={logoBackground} alt="" />
+      </div>
+      <div className="header-paper" aria-hidden="true" />
+      <div className="paper-curl" aria-hidden="true" />
+      <button
+        className="peel-trigger"
+        type="button"
+        aria-label="Descubrir el logo oculto"
+        aria-pressed={isPeeled}
+        onClick={() => setIsPeeled(!isPeeled)}
+      />
       <div className="header-inner">
         <Link className="brand" to="/">Nunegal / ITX</Link>
-        <nav className="breadcrumbs" aria-label="Ruta de navegación">
-          <ol>
-            <li>{isDetail ? <Link to="/">Listado</Link> : <span aria-current="page">Listado</span>}</li>
-            {isDetail && <li><span aria-hidden="true">/ </span><span aria-current="page">Detalle del producto</span></li>}
-          </ol>
-        </nav>
         <p className="cart-count" aria-label="Cesta: 0 productos">Cesta <span>0</span></p>
       </div>
     </header>

@@ -11,13 +11,73 @@ body { margin: 0; }
 a { color: #164caa; text-underline-offset: 0.2em; }
 a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 3px solid #164caa; outline-offset: 5px; }
-.site-header { background: #fff; border-bottom: 1px solid #dce2eb; }
+/* La imagen queda fija debajo del papel: se descubre al levantar su esquina. */
+.site-header {
+  --peel-width: 144px;
+  position: relative;
+  isolation: isolate;
+  background: #fff;
+  border-bottom: 1px solid #dce2eb;
+}
+.peel-art {
+  position: absolute; inset: 0 auto 0 0; width: var(--peel-width);
+  overflow: hidden; pointer-events: none;
+}
+.peel-art { background: #26074c; }
+.peel-art img {
+  position: absolute; left: 33.333%; top: 33.333%;
+  width: 80%; height: auto; max-width: none;
+  transform: translate(-50%, -56%);
+  mask-image: linear-gradient(to right, #000 72%, transparent 100%);
+}
+.header-paper {
+  position: absolute; inset: 0; background: #fff; pointer-events: none;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0);
+  transition: clip-path 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.paper-curl {
+  position: absolute; inset: 0 auto 0 0; width: var(--peel-width);
+  pointer-events: none; opacity: 0; transform-origin: top left;
+  transform: scale(0.02);
+  transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1), opacity 200ms;
+  filter: drop-shadow(-6px -4px 5px rgb(0 0 0 / 28%));
+}
+.paper-curl::before {
+  content: ''; position: absolute; inset: 0;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  background: linear-gradient(35deg, #fafbfc 25%, #edf0f4 45%, #b9c1ce 49%, #fff 58%, #fff 70%);
+  border-bottom-right-radius: 12px;
+}
+.site-header[data-peeled='true'] .header-paper,
+.site-header:has(.peel-trigger:focus-visible) .header-paper {
+  clip-path: polygon(var(--peel-width) 0, 100% 0, 100% 100%, 0 100%, 0 100%);
+}
+.site-header[data-peeled='true'] .paper-curl,
+.site-header:has(.peel-trigger:focus-visible) .paper-curl { opacity: 1; transform: scale(1); }
+.peel-trigger {
+  position: absolute; inset: 0 auto 0 0; z-index: 3; width: var(--peel-width);
+  border: 0; padding: 0; background: transparent; cursor: grab;
+  -webkit-tap-highlight-color: transparent;
+}
+.peel-trigger:active { cursor: grabbing; }
+.peel-trigger:focus-visible { outline-offset: -5px; }
+@media (hover: hover) {
+  .site-header:has(.peel-trigger:hover) .header-paper {
+    clip-path: polygon(var(--peel-width) 0, 100% 0, 100% 100%, 0 100%, 0 100%);
+  }
+  .site-header:has(.peel-trigger:hover) .paper-curl { opacity: 1; transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .header-paper, .paper-curl { transition: none; }
+}
 .header-inner {
+  position: relative; z-index: 2; pointer-events: none;
   max-width: 1120px; margin: auto; padding: 1.25rem 1.5rem;
+  padding-left: max(1.5rem, calc(var(--peel-width) + 1rem - (100vw - min(100vw, 1120px)) / 2));
   display: flex; align-items: center; flex-wrap: wrap; gap: 1rem 2rem;
 }
-.brand { font-size: 1.25rem; font-weight: 750; color: #172033; text-decoration: none; }
-.breadcrumbs { font-size: 0.95rem; }
+.brand { pointer-events: auto; font-size: 1.25rem; font-weight: 750; color: #172033; text-decoration: none; }
+.breadcrumbs { max-width: 1120px; margin: 1.5rem auto 0; padding: 0 1.5rem; font-size: 0.95rem; }
 .breadcrumbs ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.6rem; }
 .cart-count { margin: 0 0 0 auto; white-space: nowrap; }
 .cart-count span { display: inline-block; margin-left: 0.4rem; padding: 0.1rem 0.65rem; background: #edf2fa; border-radius: 1rem; font-weight: 700; }
@@ -28,7 +88,8 @@ h1 { line-height: 1.2; font-size: clamp(1.75rem, 4vw, 2.5rem); }
 .skip-link { position: fixed; top: 0.5rem; left: 0.5rem; z-index: 1; padding: 0.7rem; background: #fff; transform: translateY(-200%); }
 .skip-link:focus { transform: translateY(0); }
 @media (max-width: 600px) {
-  .header-inner { gap: 0.75rem; padding: 1rem; }
-  .breadcrumbs { order: 3; flex-basis: 100%; }
+  .site-header { --peel-width: 56px; }
+  .header-inner { gap: 0.75rem; padding: 1rem; padding-left: calc(var(--peel-width) + 0.75rem); }
+  .breadcrumbs { padding: 0 1rem; }
   main { margin: 2rem auto; padding: 0 1rem; }
 }

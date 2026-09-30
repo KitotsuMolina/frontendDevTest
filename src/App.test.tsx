@@ -47,6 +47,8 @@ describe('navegación de la SPA', () => {
     await user.tab()
     expect(screen.getByRole('link', { name: 'Saltar al contenido' })).toHaveFocus()
     await user.tab()
+    expect(screen.getByRole('button', { name: 'Descubrir el logo oculto' })).toHaveFocus()
+    await user.tab()
     expect(screen.getByRole('link', { name: 'Nunegal / ITX' })).toHaveFocus()
     await user.tab()
     expect(screen.getByRole('link', { name: 'Abrir detalle provisional' })).toHaveFocus()

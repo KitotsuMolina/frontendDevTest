@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router'
 import Header from './components/Header'
+import Breadcrumbs from './components/Breadcrumbs'
 import ProductListPage from './pages/ProductListPage'
 import ProductDetailPage from './pages/ProductDetailPage'
 
@@ -21,6 +22,7 @@ export default function App() {
     <>
       <a className="skip-link" href="#main-content">Saltar al contenido</a>
       <Header />
+      <Breadcrumbs />
       <main id="main-content" ref={mainRef} tabIndex={-1}>
         <Routes>
           <Route path="/" element={<ProductListPage />} />
