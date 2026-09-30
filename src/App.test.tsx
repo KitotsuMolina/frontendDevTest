@@ -1,21 +1,24 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter } from 'react-router'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
+import { jsonResponse } from './test/products'
 
 function renderAt(path = '/') {
   window.history.replaceState(null, '', path)
   return render(<BrowserRouter><App /></BrowserRouter>)
 }
 
+beforeEach(() => vi.mocked(fetch).mockResolvedValue(jsonResponse()))
+
 afterEach(() => window.history.replaceState(null, '', '/'))
 
 describe('navegación de la SPA', () => {
-  it('muestra listado provisional, breadcrumb actual y cesta en cero', () => {
+  it('muestra el catálogo, breadcrumb actual y cesta en cero', async () => {
     renderAt()
     expect(screen.getByRole('heading', { name: 'Listado de productos' })).toBeVisible()
-    expect(screen.getByText('Vista provisional')).toBeVisible()
+    expect(await screen.findByRole('link', { name: 'Acer Iconia Talk S' })).toBeVisible()
     expect(screen.getByLabelText('Cesta: 0 productos')).toBeVisible()
     expect(within(screen.getByRole('navigation')).getByText('Listado')).toHaveAttribute('aria-current', 'page')
   })
@@ -44,6 +47,7 @@ describe('navegación de la SPA', () => {
   it('permite usar Tab y Enter y lleva el foco al contenido al cambiar de vista', async () => {
     const user = userEvent.setup()
     renderAt()
+    await screen.findByRole('link', { name: 'Acer Iconia Talk S' })
     await user.tab()
     expect(screen.getByRole('link', { name: 'Saltar al contenido' })).toHaveFocus()
     await user.tab()
@@ -51,7 +55,9 @@ describe('navegación de la SPA', () => {
     await user.tab()
     expect(screen.getByRole('link', { name: 'Nunegal / ITX' })).toHaveFocus()
     await user.tab()
-    expect(screen.getByRole('link', { name: 'Abrir detalle provisional' })).toHaveFocus()
+    expect(screen.getByRole('searchbox', { name: 'Buscar por marca o modelo' })).toHaveFocus()
+    await user.tab()
+    expect(screen.getByRole('link', { name: 'Acer Iconia Talk S' })).toHaveFocus()
     await user.keyboard('{Enter}')
     expect(screen.getByRole('heading', { name: 'Detalle del producto' })).toBeVisible()
     expect(screen.getByRole('main')).toHaveFocus()
@@ -64,7 +70,7 @@ describe('navegación de la SPA', () => {
   it('respeta atrás y adelante del historial tras navegar por un enlace', async () => {
     const user = userEvent.setup()
     renderAt()
-    await user.click(screen.getByRole('link', { name: 'Abrir detalle provisional' }))
+    await user.click(await screen.findByRole('link', { name: 'Acer Iconia Talk S' }))
     expect(window.location.pathname).toBe('/product/demo')
     window.history.back()
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Listado de productos' })).toBeVisible())
