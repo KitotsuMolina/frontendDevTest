@@ -7,9 +7,10 @@ context: |
   GET /api/product/:id, POST /api/cart con id, colorCode, storageCode; respuesta count.
   Caché GET en cliente con TTL de una hora; contador persistente independiente.
   Implementar por hitos reales; nunca fabricar commits retrospectivos.
-  Fase actual: cesta autorizada con POST /api/cart; listado, caché y detalle completados.
+  Fase actual: revisión final terminada; siete hitos completos y archivados.
   Rutas / y /product/:id con datos reales; contador compartido persistente actualizado desde count.
-  Detenerse tras cesta: acabado y revisión final requieren autorización del siguiente hito.
+  Revisar PDF, accesibilidad, E2E simuladas y preview; cerrar los cambios completados.
+  Detenerse tras revisión final; sin despliegue ni envío a Nunegal.
 rules:
   tasks:
     - Incluir verificaciones concretas y mantener pendientes las funcionalidades futuras.

@@ -1,6 +1,6 @@
 # Requisitos del enunciado
 
-Fuente: [Prueba frontend ITX.pdf](Prueba%20frontend%20ITX.pdf), siete páginas. Este inventario describe requisitos futuros, no comportamiento ya implementado. Los cambios de openspec/changes contienen los criterios normativos de cada hito; openspec/specs se reservará para requisitos entregados y sincronizados.
+Fuente: [Prueba frontend ITX.pdf](Prueba%20frontend%20ITX.pdf), siete páginas. Inventario del PDF. Los requisitos entregados están sincronizados en openspec/specs; las propuestas y evidencias de los hitos permanecen en openspec/changes/archive. La tabla de implementación y verificación está en [revisión final](../docs/final-review.md).
 
 | ID | Página | Requisito | Hito |
 | --- | --- | --- | --- |
@@ -27,10 +27,10 @@ Base: https://itx-frontend-test.onrender.com/
 - GET /api/product/:id → producto.
 - POST /api/cart, body { id, colorCode, storageCode } → { count }.
 
-Los ejemplos del PDF son esquemáticos: no fijan el tipo real de id ni el catálogo completo de propiedades. Se comprobará el JSON real en cada hito de integración, sin inventar valores ni asumir que count sea un incremento.
+Los ejemplos del PDF son esquemáticos: no fijan el tipo real de id ni el catálogo completo de propiedades. Se ha comprobado el JSON real en los hitos de integración, sin inventar valores ni asumir que count sea un incremento.
 
 ## Decisiones adicionales
 
-TypeScript estricto y pnpm son decisiones de proyecto solicitadas por el usuario. Se propone búsqueda sin distinción de mayúsculas, caché GET con TTL absoluto y localStorage para contador; los cambios describen sus escenarios. Los estados de carga/error/vacío y la accesibilidad son criterios de calidad añadidos para una entrega verificable.
+TypeScript estricto y pnpm son decisiones de proyecto solicitadas por el usuario. Se implementa búsqueda sin distinción de mayúsculas, caché GET con TTL absoluto y localStorage para contador; los cambios describen sus escenarios. Los estados de carga/error/vacío y la accesibilidad son criterios de calidad añadidos para una entrega verificable.
 
-El repositorio local se inicializa en esta fase. La publicación pública y la configuración del proveedor se harán en la entrega, una vez elegido el destino; no se ha publicado nada.
+Repositorio público elegido por el usuario: https://github.com/KitotsuMolina/frontendDevTest. Se conserva el historial real. No se despliega ni se envía la entrega a Nunegal en esta revisión.
