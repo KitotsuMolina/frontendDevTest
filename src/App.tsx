@@ -1,11 +1,13 @@
 import { useEffect, useRef } from 'react'
 import { Navigate, Route, Routes, useLocation, useMatch } from 'react-router'
+import { useCart } from './hooks/useCart'
 import { useProductDetail } from './hooks/useProductDetail'
 import Header from './components/Header'
 import ProductListPage from './pages/ProductListPage'
 import ProductDetailPage from './pages/ProductDetailPage'
 
 export default function App() {
+  const cart = useCart()
   const { pathname } = useLocation()
   const detailMatch = useMatch('/product/:id')
   const detail = useProductDetail(detailMatch?.params.id)
@@ -24,11 +26,13 @@ export default function App() {
   return (
     <>
       <a className="skip-link" href="#main-content">Saltar al contenido</a>
-      <Header productName={productName} />
+      <Header productName={productName} count={cart.count} />
       <main id="main-content" ref={mainRef} tabIndex={-1}>
+        {cart.status === 'success' && <p className="cart-feedback cart-feedback-success" role="status">Producto añadido a la cesta.</p>}
+        {cart.status === 'error' && <p className="cart-feedback cart-feedback-error" role="alert">No se pudo añadir el producto. El contador no ha cambiado. Puedes volver a intentarlo.</p>}
         <Routes>
           <Route path="/" element={<ProductListPage />} />
-          <Route path="/product/:id" element={<ProductDetailPage state={detail.state} retry={detail.retry} />} />
+          <Route path="/product/:id" element={<ProductDetailPage state={detail.state} retry={detail.retry} cartPending={cart.status === 'pending'} onAdd={cart.add} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

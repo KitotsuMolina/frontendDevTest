@@ -30,7 +30,6 @@ describe('detalle de producto', () => {
     expect(screen.getByRole('img', { name: 'Acer Iconia Talk S' })).toHaveAttribute('src', realProductDetail.imgUrl)
     expect(within(screen.getByRole('navigation')).getByText('Acer Iconia Talk S')).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('button', { name: 'Añadir' })).toBeDisabled()
-    expect(screen.getByText(/pendiente de integración/)).toBeVisible()
     expect(fetch).toHaveBeenCalledTimes(1)
   })
   it('selecciona color único y pide selección explícita para varios almacenamientos', async () => {
@@ -41,7 +40,7 @@ describe('detalle de producto', () => {
     expect(storage).toHaveValue('')
     await user.selectOptions(storage, '2001')
     expect(storage).toHaveValue('2001')
-    expect(screen.getByRole('button', { name: 'Añadir' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Añadir' })).toBeEnabled()
     expect(fetch).toHaveBeenCalledTimes(1)
   })
   it('mantiene ambos selectores visibles con opciones únicas', async () => {

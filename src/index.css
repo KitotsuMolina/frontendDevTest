@@ -356,3 +356,10 @@ main { margin-top: 6rem; }
 @media (prefers-reduced-motion: reduce) {
   .detail-option select, .detail-option select::picker-icon { transition: none; }
 }
+
+.add-button:not(:disabled) { background: #164caa; color: #fff; cursor: pointer; }
+.add-button:not(:disabled):hover { background: #103d89; }
+.add-button[aria-busy='true'] { cursor: progress; }
+.cart-feedback { padding: 0.85rem 1rem; border-radius: 10px; border: 1px solid; margin: 0 0 1.5rem; }
+.cart-feedback-success { background: #edf8f0; border-color: #b8dfc5; color: #245738; }
+.cart-feedback-error { background: #fff2f2; border-color: #edc4c4; color: #852e2e; }

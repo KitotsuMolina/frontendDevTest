@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router'
 import Breadcrumbs from './Breadcrumbs'
 import logoBackground from '../assets/kitotsu-logo-background.png'
 
-export default function Header({ productName }: { productName?: string }) {
+export default function Header({ productName, count }: { productName?: string; count: number }) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const isDetail = pathname.startsWith('/product/')
@@ -45,7 +45,7 @@ export default function Header({ productName }: { productName?: string }) {
       />
       <div className="header-inner">
         <Link className="brand" to="/">Nunegal / ITX</Link>
-        <p className="cart-count" aria-label="Cesta: 0 productos">Cesta <span>0</span></p>
+        <p className="cart-count" aria-label={`Cesta: ${count} productos`}>Cesta <span>{count}</span></p>
       </div>
       <div className="detail-back-tab" data-detail={isDetail}>
         <div className="tab-back-slot">

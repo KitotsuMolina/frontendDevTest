@@ -1,6 +1,6 @@
 # Prueba frontend Nunegal / ITX
 
-SPA React con Vite y TypeScript. Preparación, navegación, listado, caché y detalle completados. `/` consulta el catálogo real y permite búsqueda local; `/product/:id` consulta el detalle real y muestra sus opciones. Acciones de cesta siguen pendientes.
+SPA React con Vite y TypeScript. Preparación, navegación, listado, caché, detalle y cesta completados. `/` consulta el catálogo real y permite búsqueda local; `/product/:id` consulta el detalle real y muestra sus opciones. Añadir integra el POST y el contador persistente.
 
 ## Requisitos
 
@@ -28,7 +28,7 @@ Abrir la URL que imprime Vite (normalmente http://localhost:5173). No se necesit
 | `pnpm preview` | Servir localmente el resultado de build |
 | `pnpm spec:validate` | Validar los artefactos OpenSpec en modo estricto |
 
-`pnpm-lock.yaml` es el único archivo de bloqueo del proyecto. `pnpm-workspace.yaml` registra la política de scripts de dependencias. Las 67 pruebas verifican cliente HTTP, contrato, listado, búsqueda, precios vacíos, estados, imágenes fallidas y navegación. `fetch` se sustituye por respuestas simuladas; ninguna prueba depende de la API pública.
+`pnpm-lock.yaml` es el único archivo de bloqueo del proyecto. `pnpm-workspace.yaml` registra la política de scripts de dependencias. Las 98 pruebas verifican cliente HTTP, contrato, listado, búsqueda, precios vacíos, estados, imágenes fallidas y navegación. `fetch` se sustituye por respuestas simuladas; ninguna prueba depende de la API pública.
 
 ## Decisiones técnicas
 
@@ -56,9 +56,9 @@ Las consultas GET tendrán caché cliente con expiración de una hora y revalida
 
 OpenSpec 1.13.1 inicializado con el esquema `spec-driven` y habilidades locales de Codex. CLI fijada como dependencia de desarrollo: `pnpm exec openspec list`, `pnpm exec openspec status --change 01-navigation`.
 
-[Plan de hitos](openspec/roadmap.md): preparación → navegación → listado → caché → detalle → cesta → acabado. Cada cambio contiene propuesta, diseño, escenarios de aceptación y tareas concretas; navegación, listado, caché y detalle están completados y los restantes hitos funcionales permanecen pendientes. `openspec/specs` se reserva para especificaciones entregadas y sincronizadas, sin atribuir comportamiento futuro al código actual.
+[Plan de hitos](openspec/roadmap.md): preparación → navegación → listado → caché → detalle → cesta → acabado. Cada cambio contiene propuesta, diseño, escenarios de aceptación y tareas concretas; navegación, listado, caché, detalle y cesta están completados y los restantes hitos funcionales permanecen pendientes. `openspec/specs` se reserva para especificaciones entregadas y sincronizadas, sin atribuir comportamiento futuro al código actual.
 
-La preparación se entrega en un único primer commit real. Navegación se entrega en un segundo commit real; los ajustes posteriores de navbar y easter egg se registran en un commit propio y listado en otro. El siguiente hito es cesta, previa revisión con el usuario. La publicación en repositorio público forma parte de la entrega futura; todavía no se ha elegido destino ni publicado el proyecto.
+La preparación se entrega en un único primer commit real. Navegación se entrega en un segundo commit real; los ajustes posteriores de navbar y easter egg se registran en un commit propio y listado en otro. El siguiente hito es acabado y revisión final, previa revisión con el usuario. La publicación en repositorio público forma parte de la entrega futura; todavía no se ha elegido destino ni publicado el proyecto.
 
 ## Criterios de aceptación de preparación (hito completado)
 
@@ -81,11 +81,11 @@ Las evidencias de ejecución quedan en [verificación](openspec/changes/00-proje
 
 - `/`: listado real; cada tarjeta enlaza a `/product/:id`.
 - `/product/:id`: detalle real con características y selectores; permite volver al listado.
-- Cabecera compartida con título enlazado al inicio y cesta estática en 0 en ambas vistas. Los breadcrumbs se muestran en una solapa persistente bajo la navbar; en detalle aparece Volver y la solapa se amplía suavemente.
+- Cabecera compartida con título enlazado al inicio y contador de cesta persistente en ambas vistas. Los breadcrumbs se muestran en una solapa persistente bajo la navbar; en detalle aparece Volver y la solapa se amplía suavemente.
 - Enlaces de React Router, salto al contenido, foco visible y traslado de foco al contenido al cambiar de ruta. Diseño adaptable; el título visible del listado también se ha retirado, conservando su identificación accesible.
 - Las URL no reconocidas redirigen al listado sin añadir otra vista. En producción el hosting deberá ofrecer fallback a `index.html`; el acceso directo se ha verificado con Vite en desarrollo.
 
-Se consumen GET de listado y detalle. Persistencia y actualización de cesta se implementarán en el próximo hito.
+Se consumen GET de listado y detalle. Cesta se integra mediante POST con actualización exacta de count.
 
 [Verificación de navegación](openspec/changes/01-navigation/verification.md): siete pruebas, test/lint/build/validación correctos y comprobación en Chromium de acceso directo, historial, navegación sin recarga, teclado y tamaños 360/768/1440 px.
 
@@ -103,7 +103,7 @@ La búsqueda filtra inmediatamente por marca **o** modelo, ignorando mayúsculas
 
 Al filtrar, las tarjetas descartadas se desvanecen y las restantes se desplazan para ocupar sus huecos. Motion anima la posición sin deformar las tarjetas; las tarjetas que salen dejan de ser interactivas inmediatamente. La preferencia de movimiento reducido elimina las transiciones. El filtro sigue siendo inmediato y no genera consultas. Implementación basada en la documentación oficial de [animaciones de disposición](https://motion.dev/docs/react-layout-animations) y [AnimatePresence](https://motion.dev/docs/react-animate-presence).
 
-La carga muestra esqueletos de tarjetas con brillo animado, sin texto visible de carga, y con aviso para lectores de pantalla; el movimiento reducido desactiva la animación. Hay estados de fallo recuperable con Reintentar, catálogo vacío y búsqueda sin coincidencias. El contador sigue estático en 0; el detalle real se describe más abajo.
+La carga muestra esqueletos de tarjetas con brillo animado, sin texto visible de carga, y con aviso para lectores de pantalla; el movimiento reducido desactiva la animación. Hay estados de fallo recuperable con Reintentar, catálogo vacío y búsqueda sin coincidencias. El contador es compartido y persistente; el detalle real se describe más abajo.
 
 - `src/api/products.ts`: tipos, petición HTTP y validación del contrato, sin almacenamiento.
 - `src/hooks/useProducts.ts`: carga, error, reintento y cancelación al desmontar; no depende de la búsqueda.
@@ -150,6 +150,16 @@ Contrato real inspeccionado: `dimentions` y `secondaryCmera` mantienen los nombr
 
 `options.colors` y `options.storages`: arrays de `{ code: number, name: string }`. Iconia Talk S: Black/1000; 16 GB/2000 y 32 GB/2001. Liquid Z6 Plus: Black/1000 y White/1001; 32 GB/2000. Un código de almacenamiento no tiene significado global: se toma siempre del producto actual. Selectores únicos visibles y seleccionados; múltiples requieren elección explícita; sin opciones se indica No disponible. Cambiar de producto reinicia selecciones.
 
-El breadcrumb incorpora marca/modelo tras cargar. Esqueletos, producto inexistente (404), error con reintento y caché reutilizada al volver/recargar. Añadir está deshabilitado y etiquetado como pendiente de integración. No se envía POST ni se modifica cesta.
+El breadcrumb incorpora marca/modelo tras cargar. Esqueletos, producto inexistente (404), error con reintento y caché reutilizada al volver/recargar. Añadir se habilita al elegir opciones válidas y usa el POST descrito más abajo.
 
 [Verificación de detalle](openspec/changes/04-product-detail/verification.md): pruebas simuladas con características, opciones, cambios de producto, fallos y caché; Chromium real con acceso directo y navegación entre dos productos, 360/1440 px y cero POST.
+
+## Cesta implementada
+
+POST https://itx-frontend-test.onrender.com/api/cart con Content-Type application/json y exactamente `{id, colorCode, storageCode}`. Los códigos numéricos se toman de la opción del producto actual; las cadenas de los selectores no se envían como códigos. Selección incompleta mantiene Añadir deshabilitado. Durante envío se muestra Añadiendo… y un bloqueo síncrono evita duplicados incluso si se navega a otro detalle.
+
+La respuesta exige count entero no negativo y sustituye exactamente el contador compartido, sin incrementos ni acumulación local. Persistencia en `nunegal:cart:v1:count`, independiente de la caché de una hora. Al recargar se recupera; dato ausente/corrupto/inválido produce 0, y fallos de storage conservan funcionamiento en memoria.
+
+Confirmación accesible de éxito y error con conservación del contador anterior y reintento manual. El estado vive en App y permanece durante navegación. El POST no usa la caché GET ni reintentos automáticos y no se cancela al cambiar de ruta. Solo existen listado y detalle; sin checkout ni página de cesta.
+
+[Verificación de cesta](openspec/changes/05-cart/verification.md): 98 pruebas simuladas y una operación Chromium real. Payload `{id:"ZmGrkLRPXOTpxsU4jjAcv",colorCode:1000,storageCode:2000}`, respuesta HTTP 200 `{count:1}`; contador 1 en detalle, listado y recarga. Este resultado corresponde a una única operación y no permite afirmar acumulación remota. Acabado y revisión final siguen pendientes.

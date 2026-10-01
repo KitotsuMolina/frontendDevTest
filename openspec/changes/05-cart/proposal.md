@@ -6,7 +6,7 @@ Implementar el hito cesta de la prueba tras 04-product-detail, trazable a R08, R
 ## What Changes
 - Añadir los comportamientos definidos en la especificación de este hito.
 - Mantener exactamente dos vistas y verificar los escenarios de aceptación.
-- Estado actual: planificación; implementación pendiente de revisión con el usuario.
+- Implementación autorizada y completada: POST real, contador compartido persistente, bloqueo y estados accesibles. Acabado final pendiente.
 
 ## Capabilities
 

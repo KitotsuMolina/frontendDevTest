@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { CartSelection } from '../api/cart'
 import type { ProductDetail, ProductOption } from '../api/productDetail'
 import type { DetailState } from '../hooks/useProductDetail'
 
@@ -20,10 +21,12 @@ function OptionSelector({ label, options, value, onChange }: {
     </div>
   )
 }
-function DetailContent({ product }: { product: ProductDetail }) {
+function DetailContent({ product, cartPending, onAdd }: { product: ProductDetail; cartPending: boolean; onAdd: (selection: CartSelection) => Promise<void> }) {
   const [imageFailed, setImageFailed] = useState(false)
   const [color, setColor] = useState(() => product.options.colors.length === 1 ? String(product.options.colors[0].code) : '')
   const [storage, setStorage] = useState(() => product.options.storages.length === 1 ? String(product.options.storages[0].code) : '')
+  const selectedColor = product.options.colors.find(option => String(option.code) === color)
+  const selectedStorage = product.options.storages.find(option => String(option.code) === storage)
   const name = `${product.brand} ${product.model}`
   const attributes = [
     ['CPU', product.cpu], ['RAM', product.ram], ['Sistema operativo', product.os],
@@ -49,13 +52,17 @@ function DetailContent({ product }: { product: ProductDetail }) {
           <OptionSelector label="Color" options={product.options.colors} value={color} onChange={setColor} />
           <OptionSelector label="Almacenamiento" options={product.options.storages} value={storage} onChange={setStorage} />
         </fieldset>
-        <button className="add-button" type="button" disabled aria-describedby="cart-pending">Añadir</button>
-        <p id="cart-pending" className="integration-note">Añadir a la cesta: pendiente de integración.</p>
+        <button className="add-button" type="button" disabled={cartPending || !selectedColor || !selectedStorage}
+          aria-busy={cartPending} onClick={() => {
+            if (selectedColor && selectedStorage && !cartPending) {
+              void onAdd({ id: product.id, colorCode: selectedColor.code, storageCode: selectedStorage.code })
+            }
+          }}>{cartPending ? 'Añadiendo…' : 'Añadir'}</button>
       </div>
     </div>
   )
 }
-export default function ProductDetailPage({ state, retry }: { state: DetailState; retry: () => void }) {
+export default function ProductDetailPage({ state, retry, cartPending, onAdd }: { state: DetailState; retry: () => void; cartPending: boolean; onAdd: (selection: CartSelection) => Promise<void> }) {
   return (
     <section aria-label="Detalle del producto">
       {state.status === 'loading' && <div className="detail-layout" role="status" aria-label="Cargando producto" aria-busy="true">
@@ -65,7 +72,7 @@ export default function ProductDetailPage({ state, retry }: { state: DetailState
       </div>}
       {state.status === 'not-found' && <div className="catalog-message"><h1>Producto no encontrado</h1><p>Este producto no existe. Puedes volver al listado desde la cabecera.</p></div>}
       {state.status === 'error' && <div className="catalog-message"><p role="alert">No se pudo cargar el producto. Inténtalo de nuevo.</p><button className="retry-button" type="button" onClick={retry}>Reintentar</button></div>}
-      {state.status === 'success' && <DetailContent key={state.product.id} product={state.product} />}
+      {state.status === 'success' && <DetailContent key={state.product.id} product={state.product} cartPending={cartPending} onAdd={onAdd} />}
     </section>
   )
 }
