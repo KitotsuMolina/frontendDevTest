@@ -19,7 +19,7 @@ describe('detalle de producto', () => {
     mockProduct(); renderDetail(); await loaded()
     const region = screen.getByRole('region', { name: 'Detalle del producto' })
     expect(within(region).getByText('Acer')).toBeVisible()
-    expect(within(region).getByText('170')).toBeVisible()
+    expect(within(region).getByText('$170')).toBeVisible()
     for (const value of [realProductDetail.cpu, realProductDetail.ram, realProductDetail.os,
       realProductDetail.displaySize, realProductDetail.displayResolution, realProductDetail.battery,
       realProductDetail.dimentions, realProductDetail.weight]) {

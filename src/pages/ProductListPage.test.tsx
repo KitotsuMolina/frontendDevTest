@@ -16,7 +16,7 @@ async function renderLoaded() {
 }
 
 describe('listado de productos', () => {
-  it('muestra todos los productos, sus atributos y precios textuales sin moneda', async () => {
+  it('muestra todos los productos, sus atributos y precios con el símbolo de dólar solicitado', async () => {
     await renderLoaded()
     const cards = within(screen.getByRole('list', { name: 'Productos' })).getAllByRole('listitem')
     expect(cards).toHaveLength(products.length)
@@ -25,7 +25,7 @@ describe('listado de productos', () => {
       expect(card.getByText(product.brand)).toBeVisible()
       expect(card.getByRole('heading', { name: product.model })).toBeVisible()
       expect(card.getByRole('link')).toHaveAttribute('href', `/product/${product.id}`)
-      expect(card.getByText(product.price.trim() ? product.price : 'Precio no disponible')).toBeVisible()
+      expect(card.getByText(product.price.trim() ? `$${product.price}` : 'Precio no disponible')).toBeVisible()
     })
     expect(screen.getByRole('img', { name: 'Acer Iconia Talk S' })).toHaveAttribute('src', products[0].imgUrl)
     expect(screen.getAllByText('Precio no disponible')).toHaveLength(2)

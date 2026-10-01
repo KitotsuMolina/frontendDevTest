@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import Breadcrumbs from './Breadcrumbs'
 import logoBackground from '../assets/kitotsu-logo-background.png'
@@ -30,21 +30,19 @@ export default function Header({ productName, count }: { productName?: string; c
     if (tabRef.current) observer.observe(tabRef.current)
     return () => observer.disconnect()
   }, [])
-  const [isPeeled, setIsPeeled] = useState(false)
-
   return (
-    <header ref={headerRef} className="site-header" data-peeled={isPeeled}>
+    <header ref={headerRef} className="site-header">
       <div className="peel-art" aria-hidden="true">
         <img src={logoBackground} alt="" />
       </div>
       <div className="header-paper" aria-hidden="true" />
       <div className="paper-curl" aria-hidden="true" />
-      <button
+      <a
         className="peel-trigger"
-        type="button"
-        aria-label="Descubrir el logo oculto"
-        aria-pressed={isPeeled}
-        onClick={() => setIsPeeled(!isPeeled)}
+        href="https://github.com/KitotsuMolina"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Visitar el GitHub de KitotsuMolina (se abre en otra pestaña)"
       />
       <div className="header-inner">
         <Link className="brand" to="/">Nunegal / ITX</Link>

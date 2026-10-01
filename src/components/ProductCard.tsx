@@ -41,7 +41,7 @@ const ProductCard = forwardRef<HTMLLIElement, { product: Product }>(function Pro
         </div>
         <p className="product-brand">{product.brand}</p>
         <h2>{product.model}</h2>
-        <p className="product-price">{product.price.trim() ? product.price : 'Precio no disponible'}</p>
+        <p className="product-price">{product.price.trim() ? `$${product.price}` : 'Precio no disponible'}</p>
       </Link>
     </motion.li>
   )

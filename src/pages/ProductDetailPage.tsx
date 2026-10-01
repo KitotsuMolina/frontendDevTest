@@ -43,7 +43,7 @@ function DetailContent({ product, cartPending, onAdd }: { product: ProductDetail
       <div className="detail-description">
         <p className="eyebrow">{product.brand}</p>
         <h1 id="detail-title">{product.model}</h1>
-        <p className="detail-price">{product.price.trim() ? product.price : 'Precio no disponible'}</p>
+        <p className="detail-price">{product.price.trim() ? `$${product.price}` : 'Precio no disponible'}</p>
         <dl className="detail-attributes">
           {attributes.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{display(value)}</dd></div>)}
         </dl>

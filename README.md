@@ -55,7 +55,7 @@ Origen fijado por el enunciado: `https://itx-frontend-test.onrender.com`. `src/a
 
 `options.colors` y `options.storages` son arrays de `{code: number, name: string}`. Los códigos enviados son los números recibidos del producto actual, sin deducir equivalencias entre productos. Una opción única permanece visible y seleccionada; varias requieren selección explícita. Cambiar de producto reinicia selecciones. Añadir se habilita solo cuando ambas son válidas.
 
-El detalle conserva los nombres reales `dimentions` y `secondaryCmera`. `displaySize` contiene píxeles; `displayResolution`, pulgadas. Algunas características alternan texto y array. Se valida el JSON en ejecución, además del tipado estático. Características vacías o `-` muestran «No disponible»; precios vacíos, «Precio no disponible». No se inventa moneda ni unidad de peso.
+El detalle conserva los nombres reales `dimentions` y `secondaryCmera`. `displaySize` contiene píxeles; `displayResolution`, pulgadas. Algunas características alternan texto y array. Se valida el JSON en ejecución, además del tipado estático. Características vacías o `-` muestran «No disponible»; precios vacíos, «Precio no disponible». Por decisión visual solicitada, los precios disponibles muestran el prefijo `$`; la API no informa de una moneda y no se realiza conversión. No se inventa unidad de peso.
 
 ## Caché y contador
 

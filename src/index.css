@@ -86,18 +86,15 @@ a:hover { color: var(--color-primary-dark); text-decoration-thickness: 2px; }
   background: linear-gradient(35deg, var(--color-background) 25%, var(--color-surface-secondary) 45%, var(--color-control-border) 49%, var(--color-surface) 58%, var(--color-surface) 70%);
   border-bottom-right-radius: var(--radius-control);
 }
-.site-header[data-peeled='true'] .header-paper,
 .site-header:has(.peel-trigger:focus-visible) .header-paper {
   clip-path: polygon(var(--peel-width) 0, 100% 0, 100% 100%, 0 100%, 0 100%);
 }
-.site-header[data-peeled='true'] .paper-curl,
 .site-header:has(.peel-trigger:focus-visible) .paper-curl { opacity: 1; transform: scale(1); }
 .peel-trigger {
   position: absolute; inset: 0 auto 0 0; z-index: 3; width: var(--peel-width);
-  border: 0; padding: 0; background: transparent; cursor: grab;
+  border: 0; padding: 0; background: transparent; cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.peel-trigger:active { cursor: grabbing; }
 .peel-trigger:focus-visible { outline-offset: -5px; }
 @media (hover: hover) {
   .site-header:has(.peel-trigger:hover) .header-paper {
