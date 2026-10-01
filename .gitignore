@@ -10,3 +10,5 @@ coverage/
 .aws/
 .codex/
 .playwright-cli/
+playwright-report/
+test-results/
