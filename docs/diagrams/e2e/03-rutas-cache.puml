@@ -1,0 +1,22 @@
+@startuml
+title E2E 3 — Ruta directa, historial y caducidad exacta
+skinparam backgroundColor white
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam ArrowColor #475569
+skinparam activityBackgroundColor #EEF2FF
+skinparam activityBorderColor #6366F1
+skinparam participantBackgroundColor #EEF2FF
+skinparam participantBorderColor #6366F1
+start
+:Abrir URL directa del primer detalle: documento HTTP 200;
+:Recargar: detalle desde caché\nun GET de detalle;
+:Ir al listado y abrir segundo producto;
+:Color sin seleccionar\ndos GET de detalle en total;
+:Atrás: listado\nadelante: segundo detalle desde caché;
+:Controlar Date.now para que sea exactamente expiresAt;
+:Recargar: entrada vencida, nueva consulta;
+:Tres GET de detalle y un GET de listado en total;
+stop
+@enduml

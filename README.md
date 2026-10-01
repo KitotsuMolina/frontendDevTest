@@ -112,6 +112,8 @@ En Linux puede ser necesario instalar las dependencias del navegador indicadas p
 
 Playwright genera `playwright-report/` y `test-results/` (ignorados en Git), con capturas de listado, detalle, menú y breadcrumbs largos; las trazas se conservan al fallar. Abrir el informe: `pnpm exec playwright show-report`.
 
+[Diagramas de los nueve escenarios E2E](docs/e2e-diagrams.md): recorridos, comprobaciones y flujo de sesión mediante proxy, con imágenes SVG/PNG, fuentes PlantUML editables y distinción entre respuestas simuladas y resultados reales. La documentación incluye el comando para regenerar las imágenes localmente.
+
 **Integración real:** revisión final del 01/10/2026 en Chromium sobre preview: GET listado y detalle HTTP 200, 100 productos, búsqueda y regreso/recarga sin consultas GET adicionales con caché válida; cero POST nuevos. En el hito de cesta se observó un POST real HTTP 200 con `{count:1}` para Iconia Talk S, Black/1000 y 16 GB/2000. Es una observación concreta, no una garantía de acumulación remota. El `count:3`/`count:7` de las E2E es simulado.
 
 **Corrección posterior de sesión:** tras incorporar el proxy, dos POST reales en Chromium devolvieron `{count:1}` y `{count:2}` con la misma cookie. Se comprobó contador 2 tras navegación y recarga, usando storageCode 2001 y 2000 de productos diferentes. Evidencias y límites en [sesión de cesta](docs/cart-session-proxy.md).

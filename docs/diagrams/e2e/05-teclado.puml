@@ -1,0 +1,22 @@
+@startuml
+title E2E 5 — Teclado, foco y movimiento reducido
+skinparam backgroundColor white
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam ArrowColor #475569
+skinparam activityBackgroundColor #EEF2FF
+skinparam activityBorderColor #6366F1
+skinparam participantBackgroundColor #EEF2FF
+skinparam participantBorderColor #6366F1
+start
+:Activar prefers-reduced-motion y abrir listado;
+:Tab: saltar contenido, logo oculto, inicio, buscador, tarjeta;
+:Buscador con contorno visible\nEnter abre detalle;
+:Foco en main\nanimación de entrada desactivada;
+:Tab a color y almacenamiento\nEnter y flecha seleccionan 2000;
+:Tab a Añadir\nEnter\ncontador simulado 3;
+:Volver al listado\nscroll a 700: buscador acoplado;
+:Scroll a 500 y foco: buscador visible, sin animación ni desbordamiento;
+stop
+@enduml

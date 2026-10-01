@@ -1,0 +1,25 @@
+@startuml
+title E2E 4 — Distribución adaptable y accesibilidad
+skinparam backgroundColor white
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam ArrowColor #475569
+skinparam activityBackgroundColor #EEF2FF
+skinparam activityBorderColor #6366F1
+skinparam participantBackgroundColor #EEF2FF
+skinparam participantBorderColor #6366F1
+start
+:Abrir listado y esperar opacidad 1;
+:Columnas: escritorio 4, tablet 2, móvil 1;
+:Sin desbordamiento horizontal\naxe sin infracciones\ncaptura listado;
+:Abrir detalle y esperar opacidad 1;
+if (¿Proyecto escritorio?) then (Sí)
+:Escritorio: descripción a la derecha de imagen;
+else (Tablet o móvil)
+:Tablet y móvil: descripción debajo de imagen;
+endif
+:Imagen debajo de solapa\nsin desbordamiento\naxe\ncaptura detalle;
+:Abrir selector, capturar menú y cerrar con Escape;
+stop
+@enduml

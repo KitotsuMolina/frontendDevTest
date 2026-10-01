@@ -1,0 +1,20 @@
+@startuml
+title E2E 7 — Breadcrumb largo a 320 px
+skinparam backgroundColor white
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam ArrowColor #475569
+skinparam activityBackgroundColor #EEF2FF
+skinparam activityBorderColor #6366F1
+skinparam participantBackgroundColor #EEF2FF
+skinparam participantBorderColor #6366F1
+start
+:Fijar viewport 320 por 800;
+:Simular detalle con nombre de modelo largo;
+:Abrir URL del detalle y esperar entrada completa;
+:Imagen debajo de la solapa, sin contenido tapado;
+:Sin desbordamiento horizontal\naxe sin infracciones;
+:Guardar captura del breadcrumb largo;
+stop
+@enduml

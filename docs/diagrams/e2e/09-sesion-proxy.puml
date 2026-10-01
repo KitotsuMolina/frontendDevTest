@@ -1,0 +1,34 @@
+@startuml
+title E2E 9 — Proxy, sesión y aislamiento entre navegadores
+skinparam backgroundColor white
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam ArrowColor #475569
+skinparam activityBackgroundColor #EEF2FF
+skinparam activityBorderColor #6366F1
+skinparam participantBackgroundColor #EEF2FF
+skinparam participantBorderColor #6366F1
+participant "Contexto A de Chromium" as A
+participant "Proxy de preview" as P
+participant "Upstream HTTP simulado" as S
+participant "Contexto B aislado" as B
+A->P: POST producto 1, color 1000, storage 2001; cookie ajena
+P->S: Cuerpo exacto, sin cookie ajena
+S-->P: count 1 y Set-Cookie session_id
+P-->A: count 1; cookie HttpOnly con Path /api/cart
+A->P: POST producto 2, color 1001, storage 2000; misma sesión
+P->S: Cuerpo exacto y solo session_id de A
+S-->P: count 2
+P-->A: count 2
+A->A: Recargar y recuperar contador 2
+A->P: Otro POST producto 2, color 1000
+P->S: Misma sesión de A
+S-->P: count 3
+P-->A: count 3
+B->P: POST producto 2 sin sesión de A
+P->S: Petición independiente
+S-->P: count 1 y nueva sesión
+P-->B: count 1 y cookie de B
+A->A: Sigue contador 3; cookies de A y B distintas
+@enduml

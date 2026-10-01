@@ -1,0 +1,25 @@
+@startuml
+title E2E 1 — Recorrido completo y persistencia
+skinparam backgroundColor white
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam ArrowColor #475569
+skinparam activityBackgroundColor #EEF2FF
+skinparam activityBorderColor #6366F1
+skinparam participantBackgroundColor #EEF2FF
+skinparam participantBorderColor #6366F1
+start
+:Abrir listado: un GET y todos los productos;
+:Precio vacío: Precio no disponible;
+:Buscar aCeR con espacios: 3 resultados;
+:Buscar TALK con espacios: 1 resultado\nsigue un GET;
+:Abrir Iconia Talk S sin cambiar documento;
+:Foco en main\nbreadcrumb actual\ncolor 1000 seleccionado;
+:Añadir deshabilitado hasta seleccionar almacenamiento 2001;
+:POST exacto: id, colorCode 1000, storageCode 2001;
+:Respuesta simulada count 3: anuncio de éxito y contador 3;
+:Volver al listado y recargar;
+:Contador 3\nlistado desde caché\nsolo un POST;
+stop
+@enduml

@@ -1,0 +1,24 @@
+@startuml
+title E2E 8 — Navegación mientras se añade
+skinparam backgroundColor white
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam ArrowColor #475569
+skinparam activityBackgroundColor #EEF2FF
+skinparam activityBorderColor #6366F1
+skinparam participantBackgroundColor #EEF2FF
+skinparam participantBorderColor #6366F1
+participant "Usuario" as U
+participant "Detalle" as D
+participant "POST simulado" as M
+participant "Listado" as L
+U->D: Seleccionar almacenamiento y pulsar Añadir
+D->M: Un POST, respuesta retenida
+D-->U: Añadiendo… deshabilitado; contador 0
+U->L: Volver mediante breadcrumb
+M-->L: Liberar respuesta count 7
+L-->U: Contador 7 y anuncio de éxito accesible
+U->L: Recargar
+L-->U: Recuperar contador 7; no repetir POST
+@enduml

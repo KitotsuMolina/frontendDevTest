@@ -1,0 +1,22 @@
+@startuml
+title E2E 6 — Carga, fallo de listado y búsqueda sin coincidencias
+skinparam backgroundColor white
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam ArrowColor #475569
+skinparam activityBackgroundColor #EEF2FF
+skinparam activityBorderColor #6366F1
+skinparam participantBackgroundColor #EEF2FF
+skinparam participantBorderColor #6366F1
+start
+:Activar movimiento reducido\nretener primer GET;
+:Estado Cargando productos con aria-busy true;
+:Esqueletos sin animación\naxe sin infracciones;
+:Liberar respuesta simulada HTTP 503;
+:Alerta de fallo\nusuario pulsa Reintentar;
+:Segundo GET correcto: tarjetas visibles;
+:Buscar sin coincidencias: mensaje visible;
+:Siguen dos GET: buscar no consulta la API;
+stop
+@enduml

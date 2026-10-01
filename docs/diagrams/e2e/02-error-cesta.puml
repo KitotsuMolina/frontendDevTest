@@ -1,0 +1,22 @@
+@startuml
+title E2E 2 — Error de cesta y reintento manual
+skinparam backgroundColor white
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam ArrowColor #475569
+skinparam activityBackgroundColor #EEF2FF
+skinparam activityBorderColor #6366F1
+skinparam participantBackgroundColor #EEF2FF
+skinparam participantBorderColor #6366F1
+start
+:Abrir Liquid Z6 Plus: almacenamiento único 2000 seleccionado;
+:Color pendiente: Añadir deshabilitado;
+:Seleccionar color 1001 y pulsar Añadir;
+:Primer POST simulado: HTTP 503;
+:Alerta accesible\ncontador sigue en 0\nuna petición;
+:Usuario pulsa Añadir otra vez;
+:Segundo POST con el mismo cuerpo: count 3;
+:Contador 3\ndesaparece la alerta\ndos POST en total;
+stop
+@enduml
