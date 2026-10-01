@@ -1,6 +1,6 @@
 # Prueba frontend Nunegal / ITX
 
-SPA React con Vite y TypeScript. Preparación, navegación, listado y caché completados. `/` consulta el catálogo real y permite búsqueda local; `/product/:id` sigue mostrando detalle provisional. Consulta de detalle y acciones de cesta siguen pendientes.
+SPA React con Vite y TypeScript. Preparación, navegación, listado, caché y detalle completados. `/` consulta el catálogo real y permite búsqueda local; `/product/:id` consulta el detalle real y muestra sus opciones. Acciones de cesta siguen pendientes.
 
 ## Requisitos
 
@@ -28,7 +28,7 @@ Abrir la URL que imprime Vite (normalmente http://localhost:5173). No se necesit
 | `pnpm preview` | Servir localmente el resultado de build |
 | `pnpm spec:validate` | Validar los artefactos OpenSpec en modo estricto |
 
-`pnpm-lock.yaml` es el único archivo de bloqueo del proyecto. `pnpm-workspace.yaml` registra la política de scripts de dependencias. Las 44 pruebas verifican cliente HTTP, contrato, listado, búsqueda, precios vacíos, estados, imágenes fallidas y navegación. `fetch` se sustituye por respuestas simuladas; ninguna prueba depende de la API pública.
+`pnpm-lock.yaml` es el único archivo de bloqueo del proyecto. `pnpm-workspace.yaml` registra la política de scripts de dependencias. Las 67 pruebas verifican cliente HTTP, contrato, listado, búsqueda, precios vacíos, estados, imágenes fallidas y navegación. `fetch` se sustituye por respuestas simuladas; ninguna prueba depende de la API pública.
 
 ## Decisiones técnicas
 
@@ -56,9 +56,9 @@ Las consultas GET tendrán caché cliente con expiración de una hora y revalida
 
 OpenSpec 1.13.1 inicializado con el esquema `spec-driven` y habilidades locales de Codex. CLI fijada como dependencia de desarrollo: `pnpm exec openspec list`, `pnpm exec openspec status --change 01-navigation`.
 
-[Plan de hitos](openspec/roadmap.md): preparación → navegación → listado → caché → detalle → cesta → acabado. Cada cambio contiene propuesta, diseño, escenarios de aceptación y tareas concretas; navegación, listado y caché están completados y los restantes hitos funcionales permanecen pendientes. `openspec/specs` se reserva para especificaciones entregadas y sincronizadas, sin atribuir comportamiento futuro al código actual.
+[Plan de hitos](openspec/roadmap.md): preparación → navegación → listado → caché → detalle → cesta → acabado. Cada cambio contiene propuesta, diseño, escenarios de aceptación y tareas concretas; navegación, listado, caché y detalle están completados y los restantes hitos funcionales permanecen pendientes. `openspec/specs` se reserva para especificaciones entregadas y sincronizadas, sin atribuir comportamiento futuro al código actual.
 
-La preparación se entrega en un único primer commit real. Navegación se entrega en un segundo commit real; los ajustes posteriores de navbar y easter egg se registran en un commit propio y listado en otro. El siguiente hito es detalle, previa revisión con el usuario. La publicación en repositorio público forma parte de la entrega futura; todavía no se ha elegido destino ni publicado el proyecto.
+La preparación se entrega en un único primer commit real. Navegación se entrega en un segundo commit real; los ajustes posteriores de navbar y easter egg se registran en un commit propio y listado en otro. El siguiente hito es cesta, previa revisión con el usuario. La publicación en repositorio público forma parte de la entrega futura; todavía no se ha elegido destino ni publicado el proyecto.
 
 ## Criterios de aceptación de preparación (hito completado)
 
@@ -80,12 +80,12 @@ Las evidencias de ejecución quedan en [verificación](openspec/changes/00-proje
 ## Navegación implementada
 
 - `/`: listado real; cada tarjeta enlaza a `/product/:id`.
-- `/product/:id`: detalle provisional que identifica el parámetro de ruta y permite volver al listado.
+- `/product/:id`: detalle real con características y selectores; permite volver al listado.
 - Cabecera compartida con título enlazado al inicio y cesta estática en 0 en ambas vistas. Los breadcrumbs se muestran en una solapa persistente bajo la navbar; en detalle aparece Volver y la solapa se amplía suavemente.
 - Enlaces de React Router, salto al contenido, foco visible y traslado de foco al contenido al cambiar de ruta. Diseño adaptable; el título visible del listado también se ha retirado, conservando su identificación accesible.
 - Las URL no reconocidas redirigen al listado sin añadir otra vista. En producción el hosting deberá ofrecer fallback a `index.html`; el acceso directo se ha verificado con Vite en desarrollo.
 
-La consulta de detalle, así como persistencia y actualización de cesta, se implementarán en sus hitos. Solo se consume GET del listado.
+Se consumen GET de listado y detalle. Persistencia y actualización de cesta se implementarán en el próximo hito.
 
 [Verificación de navegación](openspec/changes/01-navigation/verification.md): siete pruebas, test/lint/build/validación correctos y comprobación en Chromium de acceso directo, historial, navegación sin recarga, teclado y tamaños 360/768/1440 px.
 
@@ -103,7 +103,7 @@ La búsqueda filtra inmediatamente por marca **o** modelo, ignorando mayúsculas
 
 Al filtrar, las tarjetas descartadas se desvanecen y las restantes se desplazan para ocupar sus huecos. Motion anima la posición sin deformar las tarjetas; las tarjetas que salen dejan de ser interactivas inmediatamente. La preferencia de movimiento reducido elimina las transiciones. El filtro sigue siendo inmediato y no genera consultas. Implementación basada en la documentación oficial de [animaciones de disposición](https://motion.dev/docs/react-layout-animations) y [AnimatePresence](https://motion.dev/docs/react-animate-presence).
 
-La carga muestra esqueletos de tarjetas con brillo animado, sin texto visible de carga, y con aviso para lectores de pantalla; el movimiento reducido desactiva la animación. Hay estados de fallo recuperable con Reintentar, catálogo vacío y búsqueda sin coincidencias. El contador sigue estático en 0 y el detalle sigue provisional.
+La carga muestra esqueletos de tarjetas con brillo animado, sin texto visible de carga, y con aviso para lectores de pantalla; el movimiento reducido desactiva la animación. Hay estados de fallo recuperable con Reintentar, catálogo vacío y búsqueda sin coincidencias. El contador sigue estático en 0; el detalle real se describe más abajo.
 
 - `src/api/products.ts`: tipos, petición HTTP y validación del contrato, sin almacenamiento.
 - `src/hooks/useProducts.ts`: carga, error, reintento y cancelación al desmontar; no depende de la búsqueda.
@@ -141,3 +141,15 @@ Datos corruptos, localStorage bloqueado o lleno se tratan como ausencia de cach�
 [Verificación de caché](openspec/changes/03-query-cache/verification.md): 44 pruebas simuladas, reloj controlado y Chromium con API real. Una petición inicial, cero adicionales al recargar o regresar al listado; una nueva petición tras forzar la expiración, sin esperar una hora real. Caché completada; detalle y cesta siguen pendientes.
 
 El buscador acoplado espera 600 ms antes de ocultarse al bajar; al primer acoplamiento reserva además 400 ms para su entrada. La salida se desliza y desvanece durante 380 ms. Subir o mantener el foco cancela la ocultación; movimiento reducido elimina las animaciones.
+
+## Detalle implementado
+
+GET /api/product/:id validado y cacheado por ID una hora. Imagen izquierda, características y opciones derecha a partir de 900 px; una columna en móvil. Marca/modelo, precio, CPU, RAM, sistema operativo, resolución, pantalla, batería, cámaras, dimensiones y peso. Sin asumir moneda o unidades; los valores ausentes/vacíos o '-' muestran No disponible. Imagen fallida tiene alternativa.
+
+Contrato real inspeccionado: `dimentions` y `secondaryCmera` mantienen los nombres de API; `displaySize` contiene píxeles y `displayResolution` pulgadas. Algunas características alternan texto/array entre productos (sim, secondaryCmera, wlan, bluetooth). Fixtures completas en src/test/productDetail.ts y validación en src/api/productDetail.ts.
+
+`options.colors` y `options.storages`: arrays de `{ code: number, name: string }`. Iconia Talk S: Black/1000; 16 GB/2000 y 32 GB/2001. Liquid Z6 Plus: Black/1000 y White/1001; 32 GB/2000. Un código de almacenamiento no tiene significado global: se toma siempre del producto actual. Selectores únicos visibles y seleccionados; múltiples requieren elección explícita; sin opciones se indica No disponible. Cambiar de producto reinicia selecciones.
+
+El breadcrumb incorpora marca/modelo tras cargar. Esqueletos, producto inexistente (404), error con reintento y caché reutilizada al volver/recargar. Añadir está deshabilitado y etiquetado como pendiente de integración. No se envía POST ni se modifica cesta.
+
+[Verificación de detalle](openspec/changes/04-product-detail/verification.md): pruebas simuladas con características, opciones, cambios de producto, fallos y caché; Chromium real con acceso directo y navegación entre dos productos, 360/1440 px y cero POST.

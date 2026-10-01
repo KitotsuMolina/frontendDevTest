@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router'
 import Breadcrumbs from './Breadcrumbs'
 import logoBackground from '../assets/kitotsu-logo-background.png'
 
-export default function Header() {
+export default function Header({ productName }: { productName?: string }) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const isDetail = pathname.startsWith('/product/')
@@ -58,7 +58,7 @@ export default function Header() {
           </button>
           )}
         </div>
-        <Breadcrumbs detail={isDetail} />
+        <Breadcrumbs detail={isDetail} productName={productName} />
       </div>
     </header>
   )

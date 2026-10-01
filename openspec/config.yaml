@@ -7,9 +7,9 @@ context: |
   GET /api/product/:id, POST /api/cart con id, colorCode, storageCode; respuesta count.
   Caché GET en cliente con TTL de una hora; contador persistente independiente.
   Implementar por hitos reales; nunca fabricar commits retrospectivos.
-  Fase actual: listado autorizado con GET /api/product y búsqueda local.
-  Rutas / y /product/:id; detalle sigue provisional y contador estático en 0.
-  Detenerse tras listado: caché, consulta de detalle y POST de cesta son fases posteriores.
+  Fase actual: detalle autorizado con GET /api/product/:id y selectores; listado y caché completados.
+  Rutas / y /product/:id con datos reales; contador estático en 0.
+  Detenerse tras detalle: POST de cesta y persistencia de contador pertenecen al siguiente hito.
 rules:
   tasks:
     - Incluir verificaciones concretas y mantener pendientes las funcionalidades futuras.

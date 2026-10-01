@@ -301,3 +301,29 @@ main { margin-top: 6rem; }
 @media (prefers-reduced-motion: reduce) {
   .search-panel[data-docked='true'][data-visible] { animation: none; }
 }
+
+.detail-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+.detail-image { min-width: 0; padding: 2rem; display: grid; place-items: center; background: #fff; border: 1px solid #dce2eb; border-radius: 16px; align-self: start; }
+.detail-image img { display: block; width: 100%; height: 360px; object-fit: contain; }
+.detail-image .image-fallback { min-height: 300px; }
+.detail-description { min-width: 0; }
+.detail-description h1 { margin: 0.5rem 0; }
+.detail-price { font-size: 1.4rem; font-weight: 700; }
+.detail-attributes { margin: 1.5rem 0; }
+.detail-attributes > div { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(0, 2fr); gap: 1rem; padding: 0.7rem 0; border-bottom: 1px solid #dce2eb; }
+.detail-attributes dt { font-weight: 600; }
+.detail-attributes dd { margin: 0; }
+.detail-options { display: flex; flex-wrap: wrap; gap: 1rem; padding: 1rem; border: 1px solid #dce2eb; border-radius: 10px; }
+.detail-options legend { font-weight: 650; }
+.detail-option { display: grid; gap: 0.5rem; flex: 1 1 160px; min-width: 0; }
+.detail-option select { width: 100%; padding: 0.7rem; border: 1px solid #a5b1c3; border-radius: 8px; background: #fff; color: inherit; font: inherit; }
+.add-button { margin-top: 1.25rem; padding: 0.75rem 1.5rem; border: 0; border-radius: 8px; background: #dce2eb; color: #526077; font: inherit; cursor: not-allowed; }
+.integration-note { font-size: 0.85rem; color: #526077; }
+.detail-image-skeleton { height: 400px; }
+.detail-skeleton-text { display: grid; gap: 1rem; }
+.detail-skeleton-text .skeleton { height: 2.5rem; }
+.detail-enter { animation: catalog-content-enter 420ms ease-out both; }
+.detail-back-tab .breadcrumbs li { min-width: 0; }
+.detail-back-tab .breadcrumbs [aria-current] { overflow-wrap: anywhere; }
+@media (min-width: 900px) { .detail-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; } }
+@media (prefers-reduced-motion: reduce) { .detail-enter { animation: none; } }

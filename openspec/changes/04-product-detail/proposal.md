@@ -6,7 +6,7 @@ Implementar el hito detalle de la prueba tras 03-query-cache, trazable a R07, R1
 ## What Changes
 - Añadir los comportamientos definidos en la especificación de este hito.
 - Mantener exactamente dos vistas y verificar los escenarios de aceptación.
-- Estado actual: planificación; implementación pendiente de revisión con el usuario.
+- Implementación autorizada y completada con contrato real, selectores y caché por ID. POST de cesta pendiente del siguiente hito.
 
 ## Capabilities
 

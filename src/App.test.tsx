@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { BrowserRouter } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
+import { demoDetail } from './test/productDetail'
 import { jsonResponse } from './test/products'
 
 function renderAt(path = '/') {
@@ -10,7 +11,8 @@ function renderAt(path = '/') {
   return render(<BrowserRouter><App /></BrowserRouter>)
 }
 
-beforeEach(() => vi.mocked(fetch).mockResolvedValue(jsonResponse()))
+beforeEach(() => vi.mocked(fetch).mockImplementation(async input => String(input).includes('/api/product/')
+  ? jsonResponse({ ...demoDetail, id: decodeURIComponent(String(input).split('/').pop()!) }) : jsonResponse()))
 
 afterEach(() => window.history.replaceState(null, '', '/'))
 
@@ -25,20 +27,15 @@ describe('navegación de la SPA', () => {
     expect(screen.queryByRole('heading', { name: 'Listado de productos' })).not.toBeInTheDocument()
   })
 
-  it('monta una URL de detalle directamente con su id y regreso explícito', () => {
+  it('monta una URL de detalle directamente y actualiza el breadcrumb con el producto', async () => {
     renderAt('/product/telefono-123')
-    expect(screen.getByRole('heading', { name: 'Detalle del producto' })).toBeVisible()
-    expect(screen.getByText('telefono-123')).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Iconia Talk S', level: 1 })).toBeVisible()
     const breadcrumbs = screen.getByRole('navigation', { name: 'Ruta de navegación' })
     expect(within(breadcrumbs).getByRole('link', { name: 'Listado' })).toHaveAttribute('href', '/')
-    expect(within(breadcrumbs).getByText('Detalle del producto')).toHaveAttribute('aria-current', 'page')
-    expect(within(screen.getByRole('banner')).getByRole('navigation')).toBeVisible()
-    expect(screen.getByText('Vista provisional')).toBeVisible()
-    expect(screen.getByRole('navigation')).toHaveTextContent('ListadoDetalle del producto')
-    expect(screen.getByRole('link', { name: 'Listado' })).toHaveAttribute('href', '/')
-    expect(screen.getByRole('banner')).toContainElement(screen.getByRole('navigation'))
+    expect(within(breadcrumbs).getByText('Acer Iconia Talk S')).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('banner')).toContainElement(breadcrumbs)
     expect(screen.getByLabelText('Cesta: 0 productos')).toBeVisible()
-    expect(screen.queryByRole('link', { name: 'Volver al listado' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Añadir' })).toBeDisabled()
   })
 
   it('muestra la solapa solo en detalle y vuelve al listado desde acceso directo', async () => {
@@ -88,7 +85,7 @@ describe('navegación de la SPA', () => {
     await user.tab()
     expect(screen.getByRole('link', { name: 'Acer Iconia Talk S' })).toHaveFocus()
     await user.keyboard('{Enter}')
-    expect(screen.getByRole('heading', { name: 'Detalle del producto' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Iconia Talk S', level: 1 })).toBeVisible()
     expect(screen.getByRole('main')).toHaveFocus()
     screen.getByRole('button', { name: 'Volver a la página anterior' }).focus()
     expect(screen.getByRole('button', { name: 'Volver a la página anterior' })).toHaveFocus()
@@ -104,7 +101,7 @@ describe('navegación de la SPA', () => {
     window.history.back()
     await waitFor(() => expect(screen.getByRole('region', { name: 'Catálogo de productos' })).toBeVisible())
     window.history.forward()
-    await waitFor(() => expect(screen.getByRole('heading', { name: 'Detalle del producto' })).toBeVisible())
+    expect(await screen.findByRole('heading', { name: 'Iconia Talk S', level: 1 })).toBeVisible()
     expect(screen.getByLabelText('Cesta: 0 productos')).toBeVisible()
   })
 })

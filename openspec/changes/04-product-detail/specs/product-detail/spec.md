@@ -25,3 +25,28 @@ El detalle SHALL representar carga, producto inexistente y errores recuperables 
 #### Scenario: Id no encontrado
 - **WHEN** el servicio devuelve que no existe el producto
 - **THEN** se informa al usuario y el enlace al listado sigue disponible.
+
+### Requirement: Selección explícita y cambio de producto
+Los selectores SHALL usar exclusivamente options.colors/options.storages y sus códigos numéricos reales. Con varias opciones SHALL exigir selección explícita y con ninguna SHALL indicar No disponible. Al cambiar de producto SHALL reiniciarse las selecciones.
+
+#### Scenario: Opciones múltiples
+- **WHEN** existen varios colores o almacenamientos
+- **THEN** el selector inicia sin opción elegida y permite seleccionar cada código recibido sin enviar POST.
+
+#### Scenario: Cambio de ID
+- **WHEN** se navega a otro producto o se regresa a uno anterior
+- **THEN** se restablecen opciones únicas y se vacían selecciones múltiples, mostrando el breadcrumb con la nueva marca/modelo.
+
+### Requirement: Valores ausentes y carga accesible
+El detalle SHALL mostrar Precio no disponible para precio vacío y No disponible para características ausentes/vacías o marcador '-'. SHALL ofrecer imagen alternativa ante fallo, esqueletos de carga, 404 diferenciado y error recuperable con reintento.
+
+#### Scenario: Fallo recuperable
+- **WHEN** falla la red, HTTP distinto de 404 o el contrato
+- **THEN** se muestra error con Reintentar, sin ofrecer datos caducados, y se conserva regreso al listado.
+
+### Requirement: Caché y cesta pendiente
+GET de detalle SHALL usar la caché existente por ID con caducidad absoluta de una hora. Añadir SHALL permanecer deshabilitado con nota pendiente de integración; no SHALL enviarse POST.
+
+#### Scenario: Reutilización de detalle
+- **WHEN** se regresa o recarga un detalle con entrada válida
+- **THEN** se reutiliza sin nueva consulta y sin renovar la caducidad; al alcanzar una hora se consulta nuevamente.
