@@ -12,9 +12,9 @@ export const products = [
 
 // Todas las peticiones al origen remoto se interceptan, incluidas imágenes y OPTIONS.
 // Los códigos de opciones proceden de fixtures de respuestas reales; no son códigos inventados.
-export async function mockApi(page: Page, options: { cartError?: boolean; listError?: boolean; delayedList?: Promise<void> } = {}) {
+export async function mockApi(page: Page, options: { cartError?: boolean; listError?: boolean; delayedList?: Promise<void>; proxyCart?: boolean } = {}) {
   const calls = { list: 0, detail: 0, cart: [] as unknown[] }
-  await page.route('https://itx-frontend-test.onrender.com/**', async route => {
+  await page.route(url => url.origin === 'https://itx-frontend-test.onrender.com' || url.pathname === '/api/cart', async route => {
     const request = route.request()
     const path = new URL(request.url()).pathname
     const headers = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'content-type', 'access-control-allow-methods': 'GET, POST, OPTIONS' }
@@ -30,6 +30,7 @@ export async function mockApi(page: Page, options: { cartError?: boolean; listEr
       const product = details.find(item => item.id === decodeURIComponent(path.slice('/api/product/'.length)))
       return route.fulfill({ headers, status: product ? 200 : 404, json: product ?? {} })
     }
+    if (path === '/api/cart' && options.proxyCart) return route.continue()
     if (path === '/api/cart' && request.method() === 'POST') {
       calls.cart.push(request.postDataJSON())
       return route.fulfill({ headers, status: options.cartError && calls.cart.length === 1 ? 503 : 200, json: { count: 3 } })

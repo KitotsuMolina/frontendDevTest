@@ -1,6 +1,6 @@
 # Hitos de desarrollo
 
-Todos los hitos están implementados, verificados y archivados el 1 de octubre de 2026. Los requisitos actuales viven en `openspec/specs`; las propuestas, decisiones, tareas y evidencias históricas se conservan en el archivo.
+Los siete hitos originales están implementados, verificados y archivados el 1 de octubre de 2026. Los requisitos actuales viven en `openspec/specs`; las propuestas, decisiones, tareas y evidencias históricas se conservan en el archivo.
 
 | Orden | Cambio y evidencias | Estado | Dependencia |
 | --- | --- | --- | --- |
@@ -13,3 +13,5 @@ Todos los hitos están implementados, verificados y archivados el 1 de octubre d
 | 6 | [06-polish](changes/archive/2026-10-01-06-polish/verification.md) | Completo y archivado | Cesta |
 
 [Revisión final y tabla del PDF](../docs/final-review.md). El historial conserva los commits originales y los ajustes visuales separados; no se han fabricado ni reescrito avances. Exactamente dos vistas. Revisión terminada, sin despliegue ni envío a Nunegal.
+
+Corrección posterior autorizada: [07-cart-session-proxy](changes/07-cart-session-proxy/tasks.md), sesión por navegador mediante proxy de cesta en desarrollo y preview. [Diagnóstico y evidencias](../docs/cart-session-proxy.md). El alojamiento de producción necesita un proxy equivalente; no se ha desplegado.

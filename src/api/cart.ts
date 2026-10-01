@@ -1,4 +1,5 @@
-export const CART_URL = 'https://itx-frontend-test.onrender.com/api/cart'
+// El proxy conserva session_id como cookie del mismo origen.
+export const CART_URL = '/api/cart'
 export interface CartSelection { id: string; colorCode: number; storageCode: number }
 export function isCartCount(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 0

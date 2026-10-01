@@ -18,7 +18,7 @@ pnpm install --frozen-lockfile
 pnpm start
 ```
 
-Abrir la URL que imprime Vite, normalmente `http://localhost:5173`. No se necesita backend local ni variables de entorno. pnpm es el gestor del proyecto; `pnpm-workspace.yaml` registra la política de scripts de dependencias.
+Abrir la URL que imprime Vite, normalmente `http://localhost:5173`. No se necesita backend local ni variables de entorno; Vite ya incorpora el proxy de cesta. pnpm es el gestor del proyecto; `pnpm-workspace.yaml` registra la política de scripts de dependencias.
 
 ## Scripts y producción local
 
@@ -39,11 +39,13 @@ pnpm build
 pnpm preview --host 127.0.0.1 --port 4173
 ```
 
-**Requisito de alojamiento:** servir `dist/` y devolver `index.html` para rutas SPA que no correspondan a archivos, por ejemplo `/product/ZmGrkLRPXOTpxsU4jjAcv`. React Router resuelve la vista en cliente. El acceso directo y la recarga del detalle están comprobados con `preview`; esto no configura el fallback de un proveedor externo. `preview` permite comprobar el build, no es el servidor de alojamiento definitivo. No se ha desplegado la aplicación.
+**Requisito de alojamiento:** servir `dist/` y devolver `index.html` para rutas SPA que no correspondan a archivos, por ejemplo `/product/ZmGrkLRPXOTpxsU4jjAcv`. React Router resuelve la vista en cliente. El acceso directo y la recarga del detalle están comprobados con `preview`; esto no configura el fallback de un proveedor externo. Además, el alojamiento debe reenviar `/api/cart` mediante un proxy del mismo origen; `dist/` por sí solo no implementa esa ruta. `preview` permite comprobar el build, no es el servidor de alojamiento definitivo. No se ha desplegado la aplicación.
 
 ## API y contratos
 
-Origen fijado por el enunciado: `https://itx-frontend-test.onrender.com`. `src/api/products.ts` define `PRODUCTS_URL`; el detalle deriva su ruta de esa constante. `src/api/cart.ts` define `CART_URL`. Para cambiar de backend deben ajustarse estas constantes y conservar los contratos; no existen variables `VITE_*` configuradas.
+Origen fijado por el enunciado: `https://itx-frontend-test.onrender.com`. `src/api/products.ts` define `PRODUCTS_URL`; el detalle deriva su ruta de esa constante. `src/api/cart.ts` usa `/api/cart` del mismo origen. El proxy de `vite.config.ts` reenvía únicamente la cesta al servicio HTTPS del enunciado y conserva session_id por navegador. `CART_PROXY_TARGET` permite cambiar ese destino en el proceso servidor (las pruebas lo usan para un upstream local); no es una variable del cliente. Para cambiar las consultas GET se ajusta PRODUCTS_URL. No existen variables `VITE_*` configuradas.
+
+[Diagnóstico, implementación y configuración equivalente de producción](docs/cart-session-proxy.md). La aplicación no usa credentials: include contra la API externa ni suma count localmente para compensar una sesión perdida.
 
 | Método | Ruta | Contrato validado |
 | --- | --- | --- |
@@ -65,7 +67,24 @@ Las consultas GET válidas se guardan en `localStorage` con `obtainedAt`, `expir
 
 La respuesta de cesta exige un `count` entero no negativo y **reemplaza** el contador con ese valor exacto, incluso si es cero o menor que el anterior. No se suma manualmente. El contador y el estado de envío viven en `App`, por lo que navegar durante una petición conserva su actualización. Hay bloqueo de envíos duplicados, «Añadiendo…», confirmación accesible y error con reintento manual. El POST no se cachea ni se reintenta automáticamente.
 
-Al recargar se recupera el contador válido; datos corruptos o inválidos producen 0. Si el almacenamiento falla, las consultas funcionan normalmente y el contador sigue funcionando en memoria. Recargar completamente durante un POST no puede garantizar su resultado: no se repite automáticamente la operación.
+Al recargar se recupera el contador válido; datos corruptos o inválidos producen 0. Si el almacenamiento falla, las consultas funcionan normalmente y el contador sigue funcionando en memoria. La cookie session_id identifica la cesta remota: borrarla o iniciar una sesión nueva puede hacer que el siguiente count vuelva a 1. Recargar completamente durante un POST no puede garantizar su resultado: no se repite automáticamente la operación.
+
+## Problema de sesión de cesta y solución aplicada
+
+Se detectó que, al añadir productos distintos mediante peticiones directas desde el navegador a la API externa, cada respuesta podía devolver `{count:1}`. **No era un problema de HTTP frente a HTTPS:** la API ya recibía las peticiones por HTTPS y respondía HTTP 200. Tampoco se debe reutilizar el mismo `storageCode` para compartir cesta: ese código identifica una opción del producto, mientras que la cookie `session_id` identifica la sesión de cesta.
+
+En la comprobación con Chromium, las peticiones directas no conservaron esa cookie. Intentar `credentials: 'include'` produjo un bloqueo CORS porque la API respondía con `Access-Control-Allow-Origin: *`, incompatible con peticiones con credenciales. Con curl y una cookie conservada, el servidor sí devolvió contadores 1 y 2. El síntoma fue comunicado también en Brave y Zen; estos dos navegadores no se automatizaron directamente.
+
+La solución aplicada cambia únicamente el envío de cesta:
+
+1. El navegador envía `POST /api/cart` al mismo origen que sirve la SPA.
+2. `server.proxy` y `preview.proxy` de Vite reenvían la petición a `https://itx-frontend-test.onrender.com/api/cart`, manteniendo HTTPS hacia la API.
+3. El proxy devuelve la cookie de sesión asociada al origen de la aplicación, conserva `HttpOnly`, limita su ruta a `/api/cart` y reenvía únicamente la cookie `session_id` de cada navegador. No hay una sesión global compartida entre usuarios.
+4. El cuerpo conserva exactamente `id`, `colorCode` y `storageCode`. El contador usa el `count` exacto del servidor; el POST no se cachea ni se reintenta automáticamente.
+
+**Resultado real verificado:** en Chromium, Iconia Talk S con almacenamiento 2001 devolvió `{count:1}` y Liquid Z6 Plus con almacenamiento 2000 devolvió `{count:2}` en la misma sesión. El contador permaneció en 2 al navegar y recargar. Las pruebas simuladas verifican además una sesión independiente y la continuidad de la sesión al recargar.
+
+Para desarrollo y preview basta ejecutar los comandos habituales; no hace falta configurar variables adicionales. **En producción, publicar `dist/` no basta:** el alojamiento debe implementar el proxy de `/api/cart` en el mismo origen, antes del fallback de las rutas SPA, y servir la aplicación por HTTPS. La configuración equivalente y sus límites están documentados en [sesión de cesta mediante proxy](docs/cart-session-proxy.md). No se ha realizado ningún despliegue.
 
 ## Diseño, accesibilidad y decisiones
 
@@ -87,19 +106,21 @@ pnpm test:e2e
 pnpm spec:validate
 ```
 
-En Linux puede ser necesario instalar las dependencias del navegador indicadas por Playwright; en un entorno compatible se puede usar `pnpm exec playwright install --with-deps chromium`. Las E2E levantan y cierran su propio preview en `127.0.0.1:4173`; ese puerto debe estar libre. `pnpm test:e2e` ya ejecuta build. Usa dos workers y no reintenta pruebas automáticamente.
+En Linux puede ser necesario instalar las dependencias del navegador indicadas por Playwright; en un entorno compatible se puede usar `pnpm exec playwright install --with-deps chromium`. Las E2E levantan y cierran su propio preview en `127.0.0.1:4173` y un upstream de cesta simulado en `127.0.0.1:4181`; ambos puertos deben estar libres. `pnpm test:e2e` ya ejecuta build. Usa dos workers y no reintenta pruebas automáticamente.
 
-**Pruebas simuladas:** 98 pruebas unitarias/de integración y 24 ejecuciones E2E (ocho escenarios en 360, 768 y 1440 px, con una comprobación adicional a 320 px). Todas sustituyen la API pública; las E2E interceptan también sus imágenes. Cubren búsqueda, rutas e historial sin recarga, selección, POST exacto, contador, recarga, expiración con reloj controlado, error/reintento manual, navegación pendiente, teclado, contraste y movimiento reducido. Vitest cubre además almacenamiento bloqueado/corrupto, respuestas inválidas, deduplicación, opciones y alternativas de imagen.
+**Pruebas simuladas:** 98 pruebas unitarias/de integración y 27 ejecuciones E2E (nueve escenarios en 360, 768 y 1440 px, con una comprobación adicional a 320 px). Todas sustituyen la API pública; las E2E interceptan también sus imágenes y la prueba de sesión atraviesa el proxy de preview hasta un servidor HTTP local simulado. Cubren búsqueda, rutas e historial sin recarga, selección, POST exacto, contador, recarga, expiración con reloj controlado, error/reintento manual, navegación pendiente, teclado, contraste y movimiento reducido. Vitest cubre además almacenamiento bloqueado/corrupto, respuestas inválidas, deduplicación, opciones y alternativas de imagen.
 
 Playwright genera `playwright-report/` y `test-results/` (ignorados en Git), con capturas de listado, detalle, menú y breadcrumbs largos; las trazas se conservan al fallar. Abrir el informe: `pnpm exec playwright show-report`.
 
 **Integración real:** revisión final del 01/10/2026 en Chromium sobre preview: GET listado y detalle HTTP 200, 100 productos, búsqueda y regreso/recarga sin consultas GET adicionales con caché válida; cero POST nuevos. En el hito de cesta se observó un POST real HTTP 200 con `{count:1}` para Iconia Talk S, Black/1000 y 16 GB/2000. Es una observación concreta, no una garantía de acumulación remota. El `count:3`/`count:7` de las E2E es simulado.
 
+**Corrección posterior de sesión:** tras incorporar el proxy, dos POST reales en Chromium devolvieron `{count:1}` y `{count:2}` con la misma cookie. Se comprobó contador 2 tras navegación y recarga, usando storageCode 2001 y 2000 de productos diferentes. Evidencias y límites en [sesión de cesta](docs/cart-session-proxy.md).
+
 Axe no detectó infracciones en las comprobaciones WCAG A/AA incluidas. Esto se complementa con teclado y revisión visual; no constituye certificación integral ni prueba con lectores de pantalla reales. Navegadores Firefox/Safari no forman parte de la matriz E2E actual. La API pública puede fallar o cambiar; hay estados y reintentos manuales. No se incorporan checkout ni una tercera vista.
 
 ## OpenSpec e historial
 
-[Hitos](openspec/roadmap.md): preparación → navegación → listado → caché → detalle → cesta → acabado. Los siete cambios están completos y archivados en `openspec/changes/archive/`; los requisitos entregados están sincronizados en `openspec/specs/`. Propuestas, decisiones, tareas y evidencias se conservan en cada archivo histórico. `pnpm exec openspec list --json` permite comprobar que no quedan cambios activos.
+[Hitos](openspec/roadmap.md): preparación → navegación → listado → caché → detalle → cesta → acabado. Los siete cambios están completos y archivados en `openspec/changes/archive/`; los requisitos entregados están sincronizados en `openspec/specs/`. Propuestas, decisiones, tareas y evidencias se conservan en cada archivo histórico. La corrección posterior `07-cart-session-proxy` está registrada como un cambio independiente en `openspec/changes/`, con tareas y verificación. `pnpm exec openspec list --json` muestra su estado.
 
 Los commits de cada hito y los ajustes visuales son reales; se añaden commits de revisión sin reescribir ni reconstruir retrospectivamente el historial. Esta fase no despliega ni envía la entrega a Nunegal.
 

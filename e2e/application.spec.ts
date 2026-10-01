@@ -206,7 +206,7 @@ test('añadir pendiente conserva estado al navegar y anuncia éxito en listado',
   let release!: () => void
   const pending = new Promise<void>(resolve => { release = resolve })
   let posts = 0
-  await page.route('https://itx-frontend-test.onrender.com/api/cart', async route => {
+  await page.route('**/api/cart', async route => {
     if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204 })
     posts++
     await pending

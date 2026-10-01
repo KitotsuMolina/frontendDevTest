@@ -18,9 +18,14 @@ export default defineConfig({
     { name: 'tablet', use: { viewport: { width: 768, height: 1024 } } },
     { name: 'mobile', use: { viewport: { width: 360, height: 800 } } },
   ],
-  webServer: {
+  webServer: [{
+    command: 'node e2e/cart-session-server.mjs',
+    url: 'http://127.0.0.1:4181/health',
+    reuseExistingServer: false,
+  }, {
+    env: { CART_PROXY_TARGET: 'http://127.0.0.1:4181' },
     command: 'pnpm preview --host 127.0.0.1 --port 4173 --strictPort',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: false,
-  },
+  }],
 })
