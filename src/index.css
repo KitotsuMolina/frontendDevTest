@@ -327,3 +327,32 @@ main { margin-top: 6rem; }
 .detail-back-tab .breadcrumbs [aria-current] { overflow-wrap: anywhere; }
 @media (min-width: 900px) { .detail-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; } }
 @media (prefers-reduced-motion: reduce) { .detail-enter { animation: none; } }
+
+/* Selectores de producto: controles nativos con menú personalizable donde se admite. */
+.detail-options { padding: 1.25rem; border-radius: 16px; background: linear-gradient(145deg, #fff, #edf2fa); box-shadow: 0 6px 20px rgb(23 32 51 / 4%); }
+.detail-options legend { padding: 0 0.5rem; color: #172033; }
+.detail-option label { font-size: 0.85rem; font-weight: 650; color: #526077; }
+.detail-option select {
+  min-height: 48px; padding: 0.8rem 1rem; border-color: #c7d2e3; border-radius: 12px;
+  background: #fff; box-shadow: 0 2px 5px rgb(23 32 51 / 4%); cursor: pointer;
+  transition: border-color 180ms, box-shadow 180ms;
+}
+.detail-option select:hover:not(:disabled) { border-color: #879ec4; }
+.detail-option select:focus-visible { border-color: #164caa; box-shadow: 0 0 0 4px rgb(22 76 170 / 10%); outline-offset: 2px; }
+.detail-option select:disabled { background: #edf1f7; color: #8797b0; cursor: not-allowed; }
+@supports (appearance: base-select) {
+  .detail-option select, .detail-option select::picker(select) { appearance: base-select; }
+  .detail-option select::picker(select) {
+    margin-top: 8px; padding: 6px; border: 1px solid #dce2eb; border-radius: 12px;
+    background: #fff; box-shadow: 0 12px 32px rgb(23 32 51 / 14%);
+  }
+  .detail-option select::picker-icon { color: #526b95; transition: rotate 180ms; }
+  .detail-option select:open::picker-icon { rotate: 180deg; }
+  .detail-option option { padding: 10px 12px; border-radius: 8px; cursor: pointer; }
+  .detail-option option:hover, .detail-option option:focus { background: #edf2fa; color: #164caa; }
+  .detail-option option:checked { background: #e6eefc; color: #164caa; font-weight: 650; }
+  .detail-option option::checkmark { color: #164caa; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .detail-option select, .detail-option select::picker-icon { transition: none; }
+}
