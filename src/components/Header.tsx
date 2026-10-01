@@ -15,16 +15,19 @@ export default function Header({ productName, count }: { productName?: string; c
     }
   }
   const headerRef = useRef<HTMLElement>(null)
+  const tabRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const header = headerRef.current
     if (!header) return
-    const measure = () => document.documentElement.style.setProperty(
-      '--header-height', `${header.getBoundingClientRect().height}px`,
-    )
+    const measure = () => {
+      document.documentElement.style.setProperty('--header-height', `${header.getBoundingClientRect().height}px`)
+      document.documentElement.style.setProperty('--navigation-height', `${tabRef.current?.getBoundingClientRect().height ?? 64}px`)
+    }
     measure()
     if (typeof ResizeObserver === 'undefined') return
     const observer = new ResizeObserver(measure)
     observer.observe(header)
+    if (tabRef.current) observer.observe(tabRef.current)
     return () => observer.disconnect()
   }, [])
   const [isPeeled, setIsPeeled] = useState(false)
@@ -47,7 +50,7 @@ export default function Header({ productName, count }: { productName?: string; c
         <Link className="brand" to="/">Nunegal / ITX</Link>
         <p className="cart-count" aria-label={`Cesta: ${count} productos`}>Cesta <span>{count}</span></p>
       </div>
-      <div className="detail-back-tab" data-detail={isDetail}>
+      <div ref={tabRef} className="detail-back-tab" data-detail={isDetail}>
         <div className="tab-back-slot">
           {isDetail && (
           <button type="button" onClick={goBack} aria-label="Volver a la página anterior">

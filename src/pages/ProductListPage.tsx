@@ -16,6 +16,7 @@ export default function ProductListPage() {
 
   return (
     <section className="catalog-page" aria-label="Catálogo de productos">
+      <h1 className="sr-only">Catálogo de productos</h1>
       <CatalogSearch value={search} onChange={setSearch} />
       {state.status === 'loading' && <ProductListSkeleton />}
       {state.status === 'error' && (

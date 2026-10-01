@@ -272,7 +272,7 @@ html {
   .detail-back-tab { padding-left: 16px; padding-right: 24px; }
   .detail-back-tab[data-detail='true'] { width: 100%; }
   .detail-back-tab[data-detail='true']::after { display: none; }
-  .detail-back-tab[data-detail='true'] .tab-back-slot { width: 96px; }
+  .detail-back-tab[data-detail='true'] .tab-back-slot { width: 104px; }
   .search-panel[data-docked='true'] { top: calc(var(--header-height, 76px) + 62px); }
   main { margin-top: 6rem; }
 }
@@ -363,3 +363,7 @@ main { margin-top: 6rem; }
 .cart-feedback { padding: 0.85rem 1rem; border-radius: 10px; border: 1px solid; margin: 0 0 1.5rem; }
 .cart-feedback-success { background: #edf8f0; border-color: #b8dfc5; color: #245738; }
 .cart-feedback-error { background: #fff2f2; border-color: #edc4c4; color: #852e2e; }
+
+/* Reserva la altura real de los breadcrumbs, incluso con nombres largos. */
+main { margin-top: max(6rem, calc(var(--navigation-height, 64px) + 2rem)); }
+html { scroll-padding-top: calc(var(--header-height, 76px) + var(--navigation-height, 64px) + 8rem); }

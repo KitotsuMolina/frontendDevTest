@@ -18,7 +18,8 @@ export default function App() {
   useEffect(() => {
     document.title = `${pathname === '/' ? 'Listado de productos' : 'Detalle del producto'} | Nunegal / ITX`
     if (previousPath.current !== pathname) {
-      mainRef.current?.focus()
+      window.scrollTo(0, 0)
+      mainRef.current?.focus({ preventScroll: true })
       previousPath.current = pathname
     }
   }, [pathname])
